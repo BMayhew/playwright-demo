@@ -4,6 +4,8 @@ I plan to create a playwright-demo repository showing off different features of 
 
 If you want to run this on your local machine, git clone the repo to local. In the main directory run the below command. This will install playwright dependencies on your machine.
 
+To see progress <https://github.com/BMayhew/playwright-demo/projects/1>
+
 ```bash
 npx playwright install
 ```
