@@ -77,5 +77,21 @@ test.describe("/api/deleteAccount", async () => {
     let responseSchema = getSchemaFromJson(body);
     expect(responseSchema).toEqual(existingSchema);
     schemaEqual(existingSchema, body);
+
+    //Validate that when POSTING to verifyLogin as the deleted user, the user is not found
+    const loginResponse = await request.post(baseURL + "/api/verifyLogin", {
+      headers: {
+        Accept: "*/*",
+        ContentType: "application/json",
+      },
+      form: {
+        email: username,
+        password: password,
+      },
+    });
+    const loginBody = JSON.parse(await loginResponse.text());
+    expect(response.status()).toBe(200);
+    expect(loginBody.responseCode).toBe(404);
+    expect(loginBody.message).toBe("User not found!");
   });
 });
