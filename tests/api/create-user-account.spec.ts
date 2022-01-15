@@ -67,7 +67,7 @@ test.describe("/api/createAccount", async () => {
     request,
     baseURL,
   }) => {
-    //Replace random email with an email that already exists set in .env file
+    //Replaces random email with an email that already exists set in .env file
     bodyForm.email = username;
     const response = await request.post(baseURL + "/api/createAccount", {
       headers: {
