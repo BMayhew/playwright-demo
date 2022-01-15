@@ -1,4 +1,4 @@
-//COVERAGE_TAG: POST /v1/auth/login
+//COVERAGE_TAG: DELETE /api/deleteAccount
 
 import { test, expect } from "@playwright/test";
 import {
@@ -41,6 +41,7 @@ test.describe("/api/deleteAccount", async () => {
     expect(response.status()).toBe(200);
     expect(body.responseCode).toBe(201);
     expect(body.message).toBe("User created!");
+    //NOTE I could bring in the lib/datafactory/user fixture and call createUser and replace the above code in before all.
   });
 
   // API Challenge 12: https://www.automationexercise.com/api_list#:~:text=API%2012%3A%20DELETE%20METHOD%20To%20Delete%20User%20Account

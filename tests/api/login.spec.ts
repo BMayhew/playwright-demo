@@ -1,4 +1,4 @@
-//COVERAGE_TAG: POST /v1/auth/login
+//COVERAGE_TAG: POST /api/verifyLogin
 
 import { test, expect } from "@playwright/test";
 import {
