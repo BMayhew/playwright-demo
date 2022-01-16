@@ -8,7 +8,8 @@ import {
 } from "../../lib/validateJsonSchema";
 
 test.describe("/api/deleteAccount", async () => {
-  let username = Date.now() + "test@asdf.comx";
+  let username =
+    Date.now() + (Math.floor(Math.random() * 90000) + 10000) + "test@asdf.comx";
   let password = process.env.USER_PASSWORD;
   let bodyForm = {
     name: "Testy",

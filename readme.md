@@ -26,3 +26,8 @@ npx playwright test
 * [@playwright/test](https://www.npmjs.com/package/@playwright/test) | [Playwright Docs](https://playwright.dev/) - allows us to use the playwright test runner along with playwright
 * [dotenv](https://www.npmjs.com/package/dotenv) - allows us to use the .env file at the root of the directory to use environment variables
 * [genson-js](https://www.npmjs.com/package/genson-js) - used in JSON schema generation and comparison
+
+### Additional Learnings
+
+* [Getting Started with Json Schema](https://json-schema.org/learn/getting-started-step-by-step.html)
+* [Understanding Json Schema](https://json-schema.org/understanding-json-schema/index.html)

@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 let name = "Happy McPathy";
-let email = "happymcpathy@test.comx";
+let email =
+  Date.now() + (Math.floor(Math.random() * 90000) + 10000) + "test@asdf.comx";
 let password = "P@$$w0rD";
 
-test.skip("Register a new user", async ({ page, baseURL }) => {
+test("Register a new user", async ({ page, baseURL }) => {
   await page.goto(baseURL + "/login");
 
   //Visit New User Signup Page
@@ -56,4 +57,12 @@ test.skip("Register a new user", async ({ page, baseURL }) => {
   await page.locator("[data-qa=zipcode]").fill("30009");
   await page.locator("[data-qa=mobile_number]").fill("1231231231");
   await page.locator("[data-qa=create-account]").click();
+
+  expect(await page.locator("body")).toContainText("Account Created!");
+  expect(await page.screenshot()).toMatchSnapshot("account_created.png");
+
+  await page.locator("[data-qa=continue-button]").click();
+  await page.locator("text=Logout").click();
+  expect(await page.locator("header")).not.toContainText("Logged in as Test");
+  expect(await page.locator("[data-qa=login-email]")).toHaveCount(1);
 });
