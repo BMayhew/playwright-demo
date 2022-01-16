@@ -19,6 +19,30 @@ npx playwright install
 npx playwright test
 ```
 
+### Working with Snapshots (images)
+
+Update current snapshots
+
+```bash
+npx playwright test --update-snapshots
+```
+
+### Updating Snapshots for CI runs
+
+You will run into scenarios where you will need to add a update a snapshot image. The best way to do this is running the test within a local docker container with the flag --update-snapshots.
+
+If running on a M1 mac, this playwright docker image will work
+
+```bash
+docker run --ipc=host --shm-size=1gb --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.17.1-arm64 /bin/bash
+```
+
+While at the bash prompt in the docker container you can run this command which will install playwright and all the dependencies and run all the tests and update the snapshots
+
+```bash
+npm ci && npx playwright install --with-deps && npx playwright test --update-snapshots
+```
+
 ## Packages
 
 > Note these packages are automatically installed when running the install commands above
