@@ -1,4 +1,4 @@
-//COVERAGE_TAG: POST /v1/auth/login
+//COVERAGE_TAG: POST /api/createAccount
 
 import { test, expect } from "@playwright/test";
 import {
@@ -12,7 +12,10 @@ test.describe("/api/createAccount", async () => {
   let password = process.env.USER_PASSWORD;
   let bodyForm = {
     name: "Testy",
-    email: Date.now() + "test@asdf.comx",
+    email:
+      Date.now() +
+      (Math.floor(Math.random() * 90000) + 10000) +
+      "test@asdf.comx",
     password: password,
     title: "Mr",
     birth_date: "10",
