@@ -59,7 +59,7 @@ test("Register a new user", async ({ page, baseURL }) => {
   await page.locator("[data-qa=create-account]").click();
 
   expect(await page.locator("body")).toContainText("Account Created!");
-  expect(await page.screenshot()).toMatchSnapshot("account_created.png");
+  // expect(await page.screenshot()).toMatchSnapshot("account_created.png");
 
   await page.locator("[data-qa=continue-button]").click();
   await page.locator("text=Logout").click();
