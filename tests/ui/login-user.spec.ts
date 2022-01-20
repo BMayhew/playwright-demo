@@ -17,7 +17,7 @@ test("Successfully Login", async ({ page, baseURL }) => {
 
   await page.locator("[data-qa=login-email]").fill(username);
   await page.locator("[data-qa=login-password]").fill(password);
-  await page.locator("[data-qa=login-button]").click();
+  await page.locator("text=Login").click(); //this is currently broken on purpose
   expect(await page.locator("header")).toContainText("Logged in as Testy");
 });
 
