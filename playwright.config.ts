@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from "@playwright/test";
 require("dotenv").config();
 
 const config: PlaywrightTestConfig = {
-  //globalSetup: "./global-setup",
+  globalSetup: "./global-setup",
   //globalTeardown: './global-teardown',
   use: {
     baseURL: process.env.APP_URL,
