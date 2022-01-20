@@ -21,8 +21,8 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 5
-    - name: Deploy 🚀
-      uses: JamesIves/github-pages-deploy-action@4.1.7
-      with:
-        branch: gh-pages # The branch the action should deploy to.
-        folder: playwright-report # The folder the action should deploy.
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: playwright-report # The folder the action should deploy.
