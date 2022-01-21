@@ -16,13 +16,12 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v2
-        if: ${{ always() }}
+        if: always()
         with:
-          name: playwright-report
-          path: playwright-report
-          retention-days: 5
-    # - name: Deploy 🚀
-    #   uses: JamesIves/github-pages-deploy-action@4.1.7
-    #   with:
-    #     branch: gh-pages # The branch the action should deploy to.
-    #     folder: playwright-report # The folder the action should deploy.
+          name: playwright-test-results
+          path: test-results/
+      # - name: Deploy 🚀
+      #   uses: JamesIves/github-pages-deploy-action@4.1.7
+      #   with:
+      #     branch: gh-pages # The branch the action should deploy to.
+      #     folder: playwright-report # The folder the action should deploy.

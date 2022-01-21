@@ -19,7 +19,38 @@ npx playwright install
 npx playwright test
 ```
 
-### Working with Snapshots (images)
+## Running the Tests in VS Code
+
+* In VSCode use the "View --> Debug Console" menu option, choose "Terminal" and make sure "Javascript Debug Terminal is set as the terminal type.
+* Add a breakpoint in your code using the red dot in the left margin.
+* Use the `npm run debug` command which starts a debugging session where you can step through and see variables.
+
+## Writing Assertions
+
+*[Playwright API Assertions](https://jestjs.io/docs/expect) - docs to the API assertions using Jest
+
+## Json Schema Checks
+
+I use genson-js to generate JSONSchema for schema snapshot testing. <https://github.com/aspecto-io/genson-js>. For most of our API calls we will do a JSON schema check. This can be done with the below lines of code.
+
+```javascript
+    //This section does Json Schema Assertions
+    let jsonName = "{VERB}_{endpoint_name}";
+    let path = "{path}";
+
+    //Comment this command once you have created the schema and saved
+    //createJsonSchema(jsonName, path, body);
+    let existingSchema = require("../../.api/" +
+      path +
+      "/" +
+      jsonName +
+      "_schema.json");
+    let responseSchema = getSchemaFromJson(body);
+    expect(responseSchema).toEqual(existingSchema);
+    schemaEqual(existingSchema, body);
+```
+
+## Working with Snapshots (images)
 
 Update current snapshots
 
@@ -27,7 +58,7 @@ Update current snapshots
 npx playwright test --update-snapshots
 ```
 
-### Updating Snapshots for CI runs
+## Updating Snapshots for CI runs
 
 You will run into scenarios where you will need to add a update a snapshot image. The best way to do this is running the test within a local docker container with the flag --update-snapshots.
 
@@ -51,7 +82,7 @@ npm ci && npx playwright install --with-deps && npx playwright test --update-sna
 * [dotenv](https://www.npmjs.com/package/dotenv) - allows us to use the .env file at the root of the directory to use environment variables
 * [genson-js](https://www.npmjs.com/package/genson-js) - used in JSON schema generation and comparison
 
-### Additional Learnings
+## Additional Learnings
 
 * [Getting Started with Json Schema](https://json-schema.org/learn/getting-started-step-by-step.html)
 * [Understanding Json Schema](https://json-schema.org/understanding-json-schema/index.html)
