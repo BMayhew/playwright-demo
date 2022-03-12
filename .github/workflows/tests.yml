@@ -15,7 +15,7 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: cache-playwright-macos
+          key: cache-playwright-linux-1.19.2
 
       - name: Install Dependencies
         run: npm ci
