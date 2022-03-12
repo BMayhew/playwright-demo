@@ -15,13 +15,12 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-            **/node_modules/playwright
           key: cache-playwright-macos
 
-      - name: Install Playwright Dependencies
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npm install
+      - name: Install Dependencies
+        run: npm ci
       - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
