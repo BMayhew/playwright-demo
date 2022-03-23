@@ -4,6 +4,10 @@ I plan to create a playwright-demo repository showing off different features of 
 
 For many of the tests I will be using - <https://www.automationexercise.com/>
 
+## Getting Started
+
+The framework we are using is [Playwright](https://playwright.dev/). If you want a good video to introduce you to Playwright, check out [this video](https://www.youtube.com/watch?v=_Jla6DyuEu4). You can try out playwright in the cloud [here](https://try.playwright.tech/).
+
 ## Installation
 
 If you want to run this on your local machine, git clone the repo to local. In the main directory run the below commands. This will install playwright dependencies on your machine.
@@ -19,7 +23,14 @@ npx playwright install
 npx playwright test
 ```
 
-## Running the Tests in VS Code
+### Running the Tests in VS Code
+
+The Playwright team has released a VS Code Extension that allows you to debug tests easily with the click or right click of a button.
+
+* [Playwright Extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
+* [Video walk through of the features](https://www.youtube.com/watch?v=z0EOFvlf14U)
+
+### Running the Tests in VS Code - The Old Way
 
 * In VSCode use the "View --> Debug Console" menu option, choose "Terminal" and make sure "Javascript Debug Terminal is set as the terminal type.
 * Add a breakpoint in your code using the red dot in the left margin.
