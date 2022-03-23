@@ -8,6 +8,8 @@ const config: PlaywrightTestConfig = {
     baseURL: process.env.APP_URL,
     browserName: "chromium",
     headless: true,
+    navigationTimeout: 5000,
+    actionTimeout: 5000,
     launchOptions: {
       args: [
         "--disable-dev-shm-usage",
@@ -24,8 +26,11 @@ const config: PlaywrightTestConfig = {
     extraHTTPHeaders: { playwright: "yes" },
   },
   retries: 0,
+  workers: 2,
   reporter: [["list"], ["html"]],
   forbidOnly: !!process.env.CI, //This will fail if 'test.only' is committed to repo
 };
 
 export default config;
+
+

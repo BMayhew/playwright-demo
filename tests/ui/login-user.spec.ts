@@ -17,7 +17,10 @@ test("Successfully Login", async ({ page, baseURL }) => {
 
   await page.locator("[data-qa=login-email]").fill(username);
   await page.locator("[data-qa=login-password]").fill(password);
-  await page.locator("button:has-text('Login')").click(); //this is currently was broken on purpose
+  await page.locator("button:has-text('Login')").click();
+  //await page.locator("text=Login").click();
+  //await page.locator("button:has-text('Login1')").click(); //this is currently was broken on purpose
+
   expect(await page.locator("header")).toContainText("Logged in as Testy");
 });
 
