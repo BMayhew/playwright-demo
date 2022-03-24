@@ -4,9 +4,13 @@ I plan to create a playwright-demo repository showing off different features of 
 
 For many of the tests I will be using - <https://www.automationexercise.com/>
 
+<<<<<<< HEAD
 ## Getting Started
 
 The framework we are using is [Playwright](https://playwright.dev/). If you want a good video to introduce you to Playwright, check out [this video](https://www.youtube.com/watch?v=_Jla6DyuEu4). You can try out playwright in the cloud [here](https://try.playwright.tech/).
+=======
+For helpful tips checkout <https://playwrightsolutions.com>
+>>>>>>> 3db87da (adding playwright solutions)
 
 ## Installation
 
