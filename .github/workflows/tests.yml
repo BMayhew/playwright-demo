@@ -14,8 +14,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: playwright-test-results
-          path: test-results/
+          name: playwright-report
+          path: playwright-report/
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
