@@ -5,7 +5,8 @@ Videos!
 Retries!
 Reporters (HTML)!
 Workers - How many tests should run in parallel?
-### Other Ideas
+
+## Other Ideas
 
 - Walk through the Register-user spec via debug
 - Explain selectors and how they work
