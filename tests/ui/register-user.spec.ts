@@ -5,6 +5,15 @@ let email =
   Date.now() + (Math.floor(Math.random() * 90000) + 10000) + "test@asdf.comx";
 let password = "P@$$w0rD";
 
+test.beforeEach(async ({ context }) => {
+  await context.route("**/*", (request) => {
+    request.request().url().startsWith("https://googleads.g.doubleclick.net")
+      ? request.abort() //if true
+      : request.continue(); //if false
+    return;
+  });
+});
+
 test("Register a new user", async ({ page, baseURL }) => {
   await page.goto(baseURL + "/login");
 

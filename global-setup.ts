@@ -1,6 +1,5 @@
-import { chromium, FullConfig, request } from "@playwright/test";
+import { FullConfig } from "@playwright/test";
 require("dotenv").config();
-import { fetchOpenApi, getEndpoints, getCoverage } from "./lib/coverage";
 import { getHealthCheckCode } from "./lib/datafactory/healthcheck";
 
 console.log("Loading Globals");
@@ -12,7 +11,7 @@ let baseURL = process.env.APIURL;
 async function globalSetup(config: FullConfig) {
   let healthCheckResponse = 0;
 
-  const sleep = (ms) => {
+  const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
 
@@ -31,6 +30,7 @@ async function globalSetup(config: FullConfig) {
     }
   };
   await forLoop();
+
   console.log("Finished Loading Globals");
 }
 

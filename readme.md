@@ -19,6 +19,16 @@ npm install
 npx playwright install
 ```
 
+## If you want to start from scratch
+
+You can easily start a project from scratch by running the below command from an empty directory. This will even create the GitHub Actions file for running these tests in the cloud.
+
+```bash
+npm init playwright@latest
+```
+
+From a new directory run npm init playwright
+
 ## Running the automated checks
 
 ```bash
@@ -37,12 +47,6 @@ The Playwright team has released a VS Code Extension that allows you to debug te
 
 * [Playwright Extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 * [Video walk through of the features](https://www.youtube.com/watch?v=z0EOFvlf14U)
-
-### Running the Tests in VS Code - The Old Way
-
-* In VSCode use the "View --> Debug Console" menu option, choose "Terminal" and make sure "Javascript Debug Terminal is set as the terminal type.
-* Add a breakpoint in your code using the red dot in the left margin.
-* Use the `npm run debug` command which starts a debugging session where you can step through and see variables.
 
 ## Writing Assertions
 
@@ -105,3 +109,11 @@ npm ci && npx playwright install --with-deps && npx playwright test --update-sna
 
 * [Getting Started with Json Schema](https://json-schema.org/learn/getting-started-step-by-step.html)
 * [Understanding Json Schema](https://json-schema.org/understanding-json-schema/index.html)
+
+## Playwright Resources
+
+* [Playwright Docs](https://playwright.dev/docs/intro)
+* [Playwright Solutions](https://playwrightsolutions.com/)
+* [Awesome-Playwright](https://github.com/mxschmitt/awesome-playwright)
+* [25 reasons to choose Playwright as your next web testing framework](https://www.marcusfelling.com/blog/2022/25-reasons-to-choose-playwright-as-your-next-web-testing-framework)
+* [Create resilient 🎭 Playwright e2e tests with locators](https://www.marcusfelling.com/blog/2022/create-more-reliable-playwright-tests-with-locators/)
