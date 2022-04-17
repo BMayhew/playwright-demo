@@ -17,10 +17,12 @@ jobs:
           name: playwright-report
           path: playwright-report/
       - name: Install rsync 📚
+        if: always()
         run: |
           apt-get update && apt-get install -y rsync
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.7
+        if: always()
         with:
           branch: gh-pages # The branch the action should deploy to.
           folder: playwright-report # The folder the action should deploy.
