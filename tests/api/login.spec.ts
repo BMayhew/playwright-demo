@@ -1,18 +1,15 @@
 //COVERAGE_TAG: POST /api/verifyLogin
 
 import { test, expect } from "@playwright/test";
-import {
-  getSchemaFromJson,
-  createJsonSchema,
-  schemaEqual,
-} from "../../lib/validateJsonSchema";
+import { validateJsonSchema } from "../../lib/helpers/schemas/validateJsonSchema";
 
 test.describe("/api/verifyLogin", async () => {
   let username = process.env.USER_NAME;
   let password = process.env.USER_PASSWORD;
+  let schemaPath = "api";
 
   // API Challenge 7: https://www.automationexercise.com/api_list#:~:text=API%207%3A%20POST%20To%20Verify%20Login%20with%20valid%20details
-  test("POST with a valid username and password should be authenticated", async ({
+  test("POST with a valid un/pw should be authenticated", async ({
     request,
     baseURL,
   }) => {
@@ -33,18 +30,7 @@ test.describe("/api/verifyLogin", async () => {
 
     //This section does Json Schema Assertions
     let jsonName = "POST_login";
-    let path = "api";
-
-    //Comment this command once you have created the schema and saved
-    //createJsonSchema(jsonName, path, body);
-    let existingSchema = require("../../.api/" +
-      path +
-      "/" +
-      jsonName +
-      "_schema.json");
-    let responseSchema = getSchemaFromJson(body);
-    expect(responseSchema).toEqual(existingSchema);
-    schemaEqual(existingSchema, body);
+    validateJsonSchema(jsonName, schemaPath, body);
   });
 
   //API Challenge 8: https://www.automationexercise.com/api_list#:~:text=API%208%3A%20POST%20To%20Verify%20Login%20without%20email%20parameter
@@ -95,7 +81,7 @@ test.describe("/api/verifyLogin", async () => {
   });
 
   //API Challenge 10: https://www.automationexercise.com/api_list#:~:text=API%2010%3A%20POST%20To%20Verify%20Login%20with%20invalid%20details
-  test("POST with a invalid username and password should get unauthorized", async ({
+  test("POST with a invalid un/pw should get unauthorized", async ({
     request,
     baseURL,
   }) => {

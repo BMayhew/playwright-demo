@@ -1,15 +1,12 @@
 //COVERAGE_TAG: POST /api/createAccount
 
 import { test, expect } from "@playwright/test";
-import {
-  getSchemaFromJson,
-  createJsonSchema,
-  schemaEqual,
-} from "../../lib/validateJsonSchema";
+import { validateJsonSchema } from "../../lib/helpers/schemas/validateJsonSchema";
 
 test.describe("/api/createAccount", async () => {
   let username = process.env.USER_NAME;
   let password = process.env.USER_PASSWORD;
+  let schemaPath = "api";
   let bodyForm = {
     name: "Testy",
     email:
@@ -52,18 +49,7 @@ test.describe("/api/createAccount", async () => {
 
     //This section does Json Schema Assertions
     let jsonName = "POST_createAccount";
-    let path = "api";
-
-    //Comment this command once you have created the schema and saved
-    //createJsonSchema(jsonName, path, body);
-    let existingSchema = require("../../.api/" +
-      path +
-      "/" +
-      jsonName +
-      "_schema.json");
-    let responseSchema = getSchemaFromJson(body);
-    expect(responseSchema).toEqual(existingSchema);
-    schemaEqual(existingSchema, body);
+    validateJsonSchema(jsonName, schemaPath, body);
   });
 
   test("POST create an account that has a email that already exists", async ({

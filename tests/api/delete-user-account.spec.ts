@@ -1,16 +1,13 @@
 //COVERAGE_TAG: DELETE /api/deleteAccount
 
 import { test, expect } from "@playwright/test";
-import {
-  getSchemaFromJson,
-  createJsonSchema,
-  schemaEqual,
-} from "../../lib/validateJsonSchema";
+import { validateJsonSchema } from "../../lib/helpers/schemas/validateJsonSchema";
 
 test.describe("/api/deleteAccount", async () => {
   let username =
     Date.now() + (Math.floor(Math.random() * 90000) + 10000) + "test@asdf.comx";
   let password = process.env.USER_PASSWORD;
+  let schemaPath = "api";
   let bodyForm = {
     name: "Testy",
     email: username,
@@ -30,6 +27,7 @@ test.describe("/api/deleteAccount", async () => {
     city: "Roswell",
     mobile_number: "1231231231",
   };
+
   test.beforeAll(async ({ request, baseURL }) => {
     const response = await request.post(baseURL + "/api/createAccount", {
       headers: {
@@ -67,18 +65,7 @@ test.describe("/api/deleteAccount", async () => {
 
     //This section does Json Schema Assertions
     let jsonName = "DELETE_deleteAccount";
-    let path = "api";
-
-    //Comment this command once you have created the schema and saved
-    //createJsonSchema(jsonName, path, body);
-    let existingSchema = require("../../.api/" +
-      path +
-      "/" +
-      jsonName +
-      "_schema.json");
-    let responseSchema = getSchemaFromJson(body);
-    expect(responseSchema).toEqual(existingSchema);
-    schemaEqual(existingSchema, body);
+    validateJsonSchema(jsonName, schemaPath, body);
 
     //Validate that when POSTING to verifyLogin as the deleted user, the user is not found
     const loginResponse = await request.post(baseURL + "/api/verifyLogin", {
