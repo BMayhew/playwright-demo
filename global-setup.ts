@@ -1,6 +1,8 @@
 import { FullConfig } from "@playwright/test";
-require("dotenv").config();
+import dotenv from "dotenv";
 import { getHealthCheckCode } from "./lib/datafactory/healthcheck";
+
+dotenv.config();
 
 console.log("Loading Globals");
 
