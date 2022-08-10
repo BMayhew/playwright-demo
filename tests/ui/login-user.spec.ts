@@ -25,8 +25,8 @@ test.describe("/login", async () => {
     await page.locator("[data-qa=login-email]").fill(username);
     await page.locator("[data-qa=login-password]").fill(password);
     await page.locator("text=Login").click();
-    //await page.locator("[data-qa=login-button]").click();
-    //await page.locator("button:has-text('Login')").click();
+    // await page.locator("button:has-text('Login')").click();
+    // await page.locator("[data-qa=login-button]").click();
 
     expect(page.locator("header")).toContainText("Logged in as Testy");
   });

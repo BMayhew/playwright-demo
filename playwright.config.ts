@@ -1,5 +1,7 @@
 import { PlaywrightTestConfig } from "@playwright/test";
-require("dotenv").config();
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const config: PlaywrightTestConfig = {
   globalSetup: "./global-setup",
