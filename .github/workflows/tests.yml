@@ -4,13 +4,13 @@ jobs:
   e2e-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.22.1-focal
+    container: mcr.microsoft.com/playwright:v1.27.1-focal
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: npm ci
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npm run test
       - uses: actions/upload-artifact@v2
         if: always()
         with:
