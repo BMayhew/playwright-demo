@@ -1,11 +1,16 @@
 {
   "devDependencies": {
-    "@playwright/test": "^1.22.1"
+    "@types/node": "^18.11.0",
+    "@playwright/test": "^1.27.1"
   },
   "scripts": {
-    "debug": "npx playwright test --headed --timeout=0 --workers=1"
+    "test": "npx playwright test --grep-invert @axe",
+    "debug": "npx playwright test --headed --timeout=0 --workers=1 --grep-invert @axe",
+    "happy": "npx playwright test --grep @happy --grep-invert @axe",
+    "axe": "npx playwright test --grep @axe"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.4.5",
     "dotenv": "^11.0.0",
     "genson-js": "^0.0.8"
   }
