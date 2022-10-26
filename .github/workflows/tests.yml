@@ -6,11 +6,18 @@ permissions:
 
 jobs:
   e2e-tests:
+    permissions:
+      contents: read
+      pages: write      
+      id-token: write  
     timeout-minutes: 60
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.27.1-focal
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         run: npm ci
       - name: Run Playwright tests
@@ -24,24 +31,25 @@ jobs:
         if: always()
         run: |
           apt-get update && apt-get install -y rsync
-      # - name: Deploy 🚀
-      #   uses: JamesIves/github-pages-deploy-action@v4.4.1
-      #   if: always()
-      #   with:
-      #     branch: gh-pages
-      #     folder: playwright-report
-  deploy:
-    needs: e2e-tests
-    permissions:
-      pages: write      
-      id-token: write   
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
+     
+      - name: Configure Pages
+        uses: actions/configure-pages@v2
+        if: always()
+     
+      - name: Setup Pages
+        if: always()
+        uses: actions/configure-pages@v2
+     
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'playwright-report/'
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
 
-
+  
+  
+  
+  
