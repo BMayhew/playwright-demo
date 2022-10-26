@@ -24,9 +24,24 @@ jobs:
         if: always()
         run: |
           apt-get update && apt-get install -y rsync
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        if: always()
-        with:
-          branch: gh-pages
-          folder: playwright-report
+      # - name: Deploy 🚀
+      #   uses: JamesIves/github-pages-deploy-action@v4.4.1
+      #   if: always()
+      #   with:
+      #     branch: gh-pages
+      #     folder: playwright-report
+  deploy:
+    needs: e2e-tests
+    permissions:
+      pages: write      
+      id-token: write   
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+
+
