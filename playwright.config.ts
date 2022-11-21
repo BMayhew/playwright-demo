@@ -28,7 +28,19 @@ const config: PlaywrightTestConfig = {
   },
   retries: 1,
   workers: 2,
-  reporter: [["list"], ["html"]],
+  grep: /@happy|@smoke/,
+  reporter: [
+    [
+      "./node_modules/playwright-slack-report/dist/src/SlackReporter.js",
+      {
+        channels: ["slack-testing"], // provide one or more Slack channels
+        sendResults: "always", // "always" , "on-failure", "off"
+      },
+    ],
+    ["dot"],
+    ["list"],
+    ["html"],
+  ],
   forbidOnly: !!process.env.CI, //This will fail if 'test.only' is committed to repo
 };
 
