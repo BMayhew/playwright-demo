@@ -10,14 +10,18 @@ This is all made possible by Promise.race() - https://developer.mozilla.org/en-U
 test("Click one one of the elements in the array", async ({ page }) => {
   await page.goto("https://the-internet.herokuapp.com/disappearing_elements");
 
+  // Builds a promise that can then be passed into the Array of promises
   const waitForLocator = (locator: Locator): Promise<Locator> => {
     return locator.waitFor().then(() => locator);
   };
 
-  let returnedLocator = await Promise.race([
-    waitForLocator(page.getByRole("link", { name: "Gallery" })),
-    waitForLocator(page.getByRole("link", { name: "Portfolio" })),
-  ]);
+  let returnedLocator = await Promise.race(
+    // Array promises/locators
+    [
+      waitForLocator(page.getByRole("link", { name: "Gallery" })),
+      waitForLocator(page.getByRole("link", { name: "Portfolio" })),
+    ]
+  );
 
   // console.log(await returnedLocator.innerText());
   await returnedLocator.click();
