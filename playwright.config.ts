@@ -28,7 +28,8 @@ const config: PlaywrightTestConfig = {
     testIdAttribute: "data-qa",
   },
   testDir: "./tests",
-  snapshotPathTemplate: "{testDir}/.screenshots/{testFilePath}/{arg}{ext}",
+  snapshotPathTemplate:
+    "{testDir}/.screenshots/{testFilePath}/{platform}-{projectName}{arg}{ext}",
   retries: 1,
   workers: 2,
   reporter: [["list"], ["html"]],
