@@ -15,7 +15,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.27.1-focal
+    container: mcr.microsoft.com/playwright:v1.28.1-focal
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
