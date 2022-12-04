@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { test } from "../../lib/network/abortImages";
+import { expect } from "@playwright/test";
 import { createUser, deleteUser } from "../../lib/datafactory/user";
 
 let username = "";
@@ -19,29 +20,34 @@ test.describe("/login", async () => {
     await deleteUser(username);
   });
 
-  test("Successfully Login @happy", async ({ page, baseURL }) => {
+  test("Successfully Login @happy", async ({ page, baseURL, headless }) => {
     await page.goto(baseURL + "/login");
 
-    await page.locator("[data-qa=login-email]").fill(username);
-    await page.locator("[data-qa=login-password]").fill(password);
+    await page.getByTestId("login-email").fill(username);
+    await page.getByTestId("login-password").fill(password);
     // await page.locator("text=Login").click();
+    // await page.getByTestId("login-button").click();
     await page.locator("button:has-text('Login')").click();
-    // await page.locator("[data-qa=login-button]").click();
+    await page.waitForLoadState("networkidle");
 
     expect(page.locator("header")).toContainText("Logged in as Testy");
+
+    headless //If headless mode is true compare screenshots else skip
+      ? expect(await page.screenshot()).toMatchSnapshot("loginUserNoImages.png")
+      : console.log("Running in Headed mode, no screenshot comparison");
   });
 
   test("Successfully Logout", async ({ page, baseURL }) => {
     await page.goto(baseURL + "/login");
 
-    await page.locator("[data-qa=login-email]").fill(username);
-    await page.locator("[data-qa=login-password]").fill(password);
-    await page.locator("[data-qa=login-button]").click();
+    await page.getByTestId("login-email").fill(username);
+    await page.getByTestId("login-password").fill(password);
+    await page.getByTestId("login-button").click();
     expect(page.locator("header")).toContainText("Logged in as Testy");
-    expect(page.locator("[data-qa=login-email]")).toHaveCount(0);
+    expect(page.getByTestId("login-email")).toHaveCount(0);
 
     await page.locator("text=Logout").click();
     expect(page.locator("header")).not.toContainText("Logged in as Test");
-    expect(page.locator("[data-qa=login-email]")).toHaveCount(1);
+    expect(page.getByTestId("login-email")).toHaveCount(1);
   });
 });
