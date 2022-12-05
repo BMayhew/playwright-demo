@@ -7,7 +7,9 @@ When it doesn't render it will fall back to Portfolio link.
 This is all made possible by Promise.race() - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race
 */
 
-test("Click one one of the elements in the array", async ({ page }) => {
+test("Click one of the elements in the array using promise.race", async ({
+  page,
+}) => {
   await page.goto("https://the-internet.herokuapp.com/disappearing_elements");
 
   // Builds a promise that can then be passed into the Array of promises
@@ -25,6 +27,28 @@ test("Click one one of the elements in the array", async ({ page }) => {
 
   // console.log(await returnedLocator.innerText());
   await returnedLocator.click();
+
+  // console.log(page.url());
+  expect(page).toHaveURL(/.*gallery|.*portfolio/);
+});
+
+test("Click one of the elements that is visible out of two", async ({
+  page,
+}) => {
+  await page.goto("https://the-internet.herokuapp.com/disappearing_elements");
+
+  let gallery = page.getByRole("link", { name: "Gallery" });
+  let portfolio = page.getByRole("link", { name: "Portfolio" });
+  let valueVisible;
+
+  if (await gallery.isVisible()) {
+    valueVisible = gallery;
+  } else if (await portfolio.isVisible()) {
+    valueVisible = portfolio;
+  }
+
+  // console.log(await valueVisible.innerText());
+  await valueVisible.click();
 
   // console.log(page.url());
   expect(page).toHaveURL(/.*gallery|.*portfolio/);
