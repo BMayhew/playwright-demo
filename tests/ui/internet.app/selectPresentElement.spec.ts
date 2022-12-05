@@ -39,17 +39,16 @@ test("Click one of the elements that is visible out of two", async ({
 
   let gallery = page.getByRole("link", { name: "Gallery" });
   let portfolio = page.getByRole("link", { name: "Portfolio" });
-  let valueVisible;
+  let visibleLocator;
 
   if (await gallery.isVisible()) {
-    valueVisible = gallery;
+    visibleLocator = gallery;
   } else if (await portfolio.isVisible()) {
-    valueVisible = portfolio;
+    visibleLocator = portfolio;
+  } else {
+    console.log("No elements found");
   }
 
-  // console.log(await valueVisible.innerText());
-  await valueVisible.click();
-
-  // console.log(page.url());
+  await visibleLocator.click();
   expect(page).toHaveURL(/.*gallery|.*portfolio/);
 });
