@@ -37,18 +37,14 @@ test("Click one of the elements that is visible out of two", async ({
 }) => {
   await page.goto("https://the-internet.herokuapp.com/disappearing_elements");
 
-  let gallery = page.getByRole("link", { name: "Gallery" });
-  let portfolio = page.getByRole("link", { name: "Portfolio" });
-  let visibleLocator;
+  const gallery = page.getByRole("link", { name: "Gallery" });
+  const portfolio = page.getByRole("link", { name: "Portfolio" });
 
   if (await gallery.isVisible()) {
-    visibleLocator = gallery;
+    gallery.click();
   } else if (await portfolio.isVisible()) {
-    visibleLocator = portfolio;
-  } else {
-    console.log("No elements found");
+    portfolio.click();
   }
 
-  await visibleLocator.click();
   expect(page).toHaveURL(/.*gallery|.*portfolio/);
 });
