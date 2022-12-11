@@ -14,7 +14,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test("Register a new user", async ({ page, baseURL }) => {
+test("Register a new user @smoke", async ({ page, baseURL }) => {
   await page.goto(baseURL + "/login");
 
   //Visit New User Signup Page

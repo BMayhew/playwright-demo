@@ -29,10 +29,10 @@ test.describe("/login", async () => {
 
     expect(page.locator("header")).toContainText("Logged in as Testy");
 
-  //   headless //If headless mode is true compare screenshots else skip
-  //     ? expect(await page.screenshot()).toMatchSnapshot("loginUser.png")
-  //     : console.log("Running in Headed mode, no screenshot comparison");
-  // });
+    headless //If headless mode is true compare screenshots else skip
+      ? expect(await page.screenshot()).toMatchSnapshot("loginUser.png")
+      : console.log("Running in Headed mode, no screenshot comparison");
+  });
 
   test("Successfully Logout", async ({ page, baseURL }) => {
     await page.goto(baseURL + "/login");

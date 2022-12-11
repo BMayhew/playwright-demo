@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@types/node": "^18.11.0",
+    "playwright-slack-report": "^1.0.19",
     "@playwright/test": "^1.28.1"
   },
   "scripts": {
