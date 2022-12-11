@@ -19,11 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         env:
-          SLACK_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
+          SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
       - name: Install Dependencies
         run: npm ci
       - name: Run Playwright tests
-        run: SLACK_BOT_USER_OAUTH_TOKEN=$SLACK_TOKEN npm run test
+        run: npm run test
       - uses: actions/upload-artifact@v2
         if: always()
         with:
