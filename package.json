@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "@playwright/test": "^1.27.1",
     "@types/node": "^18.11.0",
-    "playwright-slack-report": "^1.0.19"
+    "playwright-slack-report": "^1.0.19",
+    "@playwright/test": "^1.28.1"
   },
   "scripts": {
     "test": "npx playwright test --grep-invert @axe",

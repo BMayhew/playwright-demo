@@ -25,7 +25,11 @@ const config: PlaywrightTestConfig = {
     video: "retain-on-failure",
     trace: "on",
     extraHTTPHeaders: { playwright: "yes" },
+    testIdAttribute: "data-qa",
   },
+  testDir: "./tests",
+  snapshotPathTemplate:
+    "{testDir}/.screenshots/{testFilePath}/{platform}-{projectName}{arg}{ext}",
   retries: 1,
   workers: 2,
   grep: /@happy|@smoke/,
