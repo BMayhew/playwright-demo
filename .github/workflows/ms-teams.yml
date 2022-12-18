@@ -1,21 +1,26 @@
-name: Check notification
+name: MS Teams Deploy Card
 
-on:
-  push: {}
-  release: {}
-  workflow_dispatch:
+on: [pull_request, workflow_dispatch]
 
 jobs:
-  success:
-    name: One with everything
-    runs-on: ubuntu-18.04
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@master
-      - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@master
+      - uses: actions/checkout@v2
+      # this is the new step
+      - uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
         if: always()
         with:
-          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+          custom-facts: |
+            - name: Custom Fact Name 1
+              value: Custom Fact Value 1
+            - name: Pull Request
+              value: "http://example.com/${{ github.run_id }}"
+          custom-actions: |
+            - text: View PR
+              url: "http://valid.uri.com"
+            - text: View CI
+              url: "http://example.com/${{ github.run_id }}"
