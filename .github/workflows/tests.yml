@@ -75,10 +75,11 @@ jobs:
         if: always()
         run: |
           chmod +x ./summary.json
-          PASSED=$(cat ./summary.json | jq -r '.passed[]' | tr '\n' ' ')
+          PASSED=$(cat ./summary.json | jq -r '.passed | length')
           echo "PASSED=$PASSED" >> $GITHUB_ENV 
-          FAILURES=$(cat ./summary.json | jq -r '.failed[]' | tr '\n' ' ')
-          echo "FAILURES=$FAILURES" >> $GITHUB_ENV  
+          FAILURES=$(cat ./summary.json | jq -r '.failed | length')
+          echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
+
 
       - uses: toko-bifrost/ms-teams-deploy-card@master
         if: always()
@@ -87,23 +88,19 @@ jobs:
           webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
           show-on-start: true
           show-on-failure: true          
-          environment: env.ENVIRONMENT
+          environment: ${{ env.ENVIRONMENT }}
           enable-review-diffs-action: false
           include-files: false
 
           custom-facts: |
             - name: Execution time
-              value: `${process.env.AS_TOOK}`
-            - name: Pull Request
-              value: "https://github.com/BMayhew/playwright-demo/pull/${{ github.pull_id }}"
+              value: "${process.env.AS_TOOK}"
             - name: GitHub Action Run
               value: "https://github.com/BMayhew/playwright-demo/actions/runs/${{ github.run_id }}"
-            - name: Workflow
-              value: `${process.env.AS_WORKFLOW}`
-            - name: Total Tests
-              value: (`${{ env.FAILURES }}`.match(/.spec.ts/g) || []).length + (`${{ env.PASSED }}`.match(/.spec.ts/g) || []).length
+            - name: Passed
+              value: "${{ env.PASSED }}"
             - name: Failures
-              value: `${{ env.FAILURES }}` === '' ? 'No failures' : `${{ env.FAILURES }}`.match(/.spec.ts/g).length > 10 ? `Too many failures to print. Please go to GitHub to see full list of failures` : '```${{ env.FAILURES }}```'.replace(/ /g, '\n')`
+              value: "${{ env.FAILURES }}"
           custom-actions: |
             - text: View PR
-              url: "http://valid.uri.com"
+              url: "https://github.com/BMayhew/playwright-demo/pull/${{ github.pull_id }}"
