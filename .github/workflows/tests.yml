@@ -96,24 +96,45 @@ jobs:
           echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
 
 
-      - uses: toko-bifrost/ms-teams-deploy-card@master
-        if: always()
-        with:
-          github-token: ${{ github.token }}
-          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          show-on-start: true
-          show-on-failure: true          
-          environment: ${{ env.ENVIRONMENT }}
-          enable-review-diffs-action: false
-          include-files: false
+      # - uses: toko-bifrost/ms-teams-deploy-card@master
+      #   if: always()
+      #   with:
+      #     github-token: ${{ github.token }}
+      #     webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+      #     show-on-start: true
+      #     show-on-failure: true          
+      #     environment: ${{ env.ENVIRONMENT }}
+      #     enable-review-diffs-action: false
+      #     include-files: false
 
-          custom-facts: |
-            - name: Passed
-              value: "${{ env.PASSED }}"
-            - name: Failures
-              value: "${{ env.FAILURES }}"
-          custom-actions: |
-            - text: View PR
-              url: "https://github.com/BMayhew/playwright-demo/pull/${{ github.pull_id }}"
-            - text: View Run
-              url: "https://github.com/BMayhew/playwright-demo/actions/runs/${{ github.run_id }}"
+      #     custom-facts: |
+      #       - name: Passed
+      #         value: "${{ env.PASSED }}"
+      #       - name: Failures
+      #         value: "${{ env.FAILURES }}"
+      #     custom-actions: |
+      #       - text: View Run
+      #         url: "https://github.com/BMayhew/playwright-demo/actions/runs/${{ github.run_id }}"
+
+      - name: Notify MS Teams on Success
+        if: success()
+
+        uses: jdcargile/ms-teams-notification@v1.3
+        with:
+          github-token: ${{ github.token }} # this will use the runner's token.
+          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}"
+          notification-color: 28a745
+          timezone: America/Chicago
+
+      - name: Notify MS Teams on Failure
+        if: failure()
+
+        uses: jdcargile/ms-teams-notification@v1.3
+        with:
+          github-token: ${{ github.token }} # this will use the runner's token.
+          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}"
+          notification-color: dc3545
+          timezone: America/Chicago
+
