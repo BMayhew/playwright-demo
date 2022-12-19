@@ -33,7 +33,7 @@ jobs:
       - name: Install jq and hub
         run: |
           sudo apt update
-          sudo apt install jq
+          sudo apt install jq rsync
 
       - name: Get installed Playwright version
         id: playwright-version
@@ -69,11 +69,6 @@ jobs:
           name: playwright-report
           path: playwright-report/
       
-      - name: Install rsync 📚
-        if: always()
-        run: |
-          apt-get update && apt-get install -y rsync
-     
       - name: Configure Pages
         uses: actions/configure-pages@v2
         if: always()
