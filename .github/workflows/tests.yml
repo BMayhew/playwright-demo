@@ -1,5 +1,13 @@
 name: Playwright API Checks
-on: [workflow_dispatch, pull_request]
+
+on: 
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "APP URL, to run tests against"
+        required: true
+        default: https://www.automationexercise.com
 permissions:
   contents: write
   pages: write
@@ -16,19 +24,31 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.28.1-focal
+    env: 
+      ENVIRONMENT: ${{ github.event.inputs.environment }}
+      SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
+
     steps:
+     
       - uses: actions/checkout@v3
-        env:
-          SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
+      
+      - name: Set Environment Variables
+        if: env.ENVIRONMENT == null
+        run: | 
+          echo "ENVIRONMENT=https://www.automationexercise.com" >> $GITHUB_ENV  
+                
       - name: Install Dependencies
         run: npm ci
+      
       - name: Run Playwright tests
         run: npm run test
+      
       - uses: actions/upload-artifact@v2
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
+      
       - name: Install rsync 📚
         if: always()
         run: |
@@ -51,7 +71,39 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
 
-  
-  
-  
-  
+      - name: Read Summary Report to Get Test Results
+        if: always()
+        run: |
+          chmod +x ./summary.json
+          PASSED=$(cat ./summary.json | jq -r '.passed[]' | tr '\n' ' ')
+          echo "PASSED=$PASSED" >> $GITHUB_ENV 
+          FAILURES=$(cat ./summary.json | jq -r '.failed[]' | tr '\n' ' ')
+          echo "FAILURES=$FAILURES" >> $GITHUB_ENV  
+
+      - uses: toko-bifrost/ms-teams-deploy-card@master
+        if: always()
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+          show-on-start: false
+          show-on-failure: true          
+          environment: env.ENVIRONMENT
+          enable-review-diffs: false
+          include-files: false
+
+          custom-facts: |
+            - name: Execution time
+              value: `${process.env.AS_TOOK}`
+            - name: Pull Request
+              value: "https://github.com/BMayhew/playwright-demo/pull/${{ github.pull_id }}"
+            - name: GitHub Action Run
+              value: "https://github.com/BMayhew/playwright-demo/actions/runs/${{ github.run_id }}"
+            - name: Workflow
+              value: `${process.env.AS_WORKFLOW}`
+            - name: Total Tests
+              value: (`${{ env.FAILURES }}`.match(/.spec.ts/g) || []).length + (`${{ env.PASSED }}`.match(/.spec.ts/g) || []).length
+            - name: Failures
+              value: `${{ env.FAILURES }}` === '' ? 'No failures' : `${{ env.FAILURES }}`.match(/.spec.ts/g).length > 10 ? `Too many failures to print. Please go to GitHub to see full list of failures` : '```${{ env.FAILURES }}```'.replace(/ /g, '\n')`
+          custom-actions: |
+            - text: View PR
+              url: "http://valid.uri.com"
