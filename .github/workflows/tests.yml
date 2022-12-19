@@ -34,8 +34,8 @@ jobs:
 
       - name: Install jq and hub
         run: |
-          sudo apt update
-          sudo apt install jq hub
+          apt update
+          apt install jq
 
       - name: Set Environment Variables
         if: env.ENVIRONMENT == null
@@ -98,10 +98,6 @@ jobs:
           include-files: false
 
           custom-facts: |
-            - name: Execution time
-              value: "${process.env.AS_TOOK}"
-            - name: GitHub Action Run
-              value: "https://github.com/BMayhew/playwright-demo/actions/runs/${{ github.run_id }}"
             - name: Passed
               value: "${{ env.PASSED }}"
             - name: Failures
@@ -109,3 +105,5 @@ jobs:
           custom-actions: |
             - text: View PR
               url: "https://github.com/BMayhew/playwright-demo/pull/${{ github.pull_id }}"
+            - text: View Run
+              url: "https://github.com/BMayhew/playwright-demo/actions/runs/${{ github.run_id }}"
