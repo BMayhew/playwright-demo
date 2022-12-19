@@ -123,7 +123,7 @@ jobs:
         with:
           github-token: ${{ github.token }} # this will use the runner's token.
           ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
+          notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
           notification-color: 28a745
           timezone: America/Chicago
 
@@ -134,7 +134,7 @@ jobs:
         with:
           github-token: ${{ github.token }} 
           ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
+          notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
           notification-color: dc3545
           timezone: America/Chicago
 
