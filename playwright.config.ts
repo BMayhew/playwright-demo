@@ -5,6 +5,7 @@ dotenv.config();
 
 const config: PlaywrightTestConfig = {
   globalSetup: "./global-setup",
+  globalTeardown: "./global-teardown",
   use: {
     baseURL: process.env.APP_URL,
     browserName: "chromium",
@@ -45,8 +46,9 @@ const config: PlaywrightTestConfig = {
         ["dot"],
         ["list"],
         ["html"],
+        ["./lib/metrics/summaryReporter.ts"],
       ]
-    : [["dot"], ["list"], ["html"]],
+    : [["dot"], ["list"], ["html"], ["./lib/metrics/summaryReporter.ts"]],
   forbidOnly: !!process.env.CI, //This will fail if 'test.only' is committed to repo
 };
 

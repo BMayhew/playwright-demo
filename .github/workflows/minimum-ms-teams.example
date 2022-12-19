@@ -2,42 +2,26 @@ name: Playwright API Checks
 
 on: 
   pull_request:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "APP URL, to run tests against"
-        required: true
-        default: https://www.automationexercise.com
-permissions:
-  contents: write
-  pages: write
 
 jobs:
   e2e-tests:
-    permissions:
-      contents: read
-      pages: write      
-      id-token: write  
     timeout-minutes: 60
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     env: 
-      ENVIRONMENT: ${{ github.event.inputs.environment }}
       SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
 
     steps: 
       - uses: actions/checkout@v3
 
-      - name: Install jq and hub
+      - name: Install jq
         run: |
           sudo apt update
-          sudo apt install jq rsync
+          sudo apt install jq
 
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+    
       - name: Cache playwright binaries
         uses: actions/cache@v3
         id: playwright-cache
@@ -50,13 +34,7 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
       - run: npx playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-
-
-      - name: Set Environment Variables
-        if: env.ENVIRONMENT == null
-        run: | 
-          echo "ENVIRONMENT=https://www.automationexercise.com" >> $GITHUB_ENV  
-                
+   
       - name: Install Dependencies
         run: npm ci
       
@@ -68,23 +46,6 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-      
-      - name: Configure Pages
-        uses: actions/configure-pages@v2
-        if: always()
-     
-      - name: Setup Pages
-        if: always()
-        uses: actions/configure-pages@v2
-     
-      - name: Upload artifacts
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: 'playwright-report/'
-      
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
 
       - name: Read Summary Report to Get Test Results
         if: always()
@@ -97,7 +58,6 @@ jobs:
 
       - name: Notify MS Teams on Success
         if: success()
-
         uses: jdcargile/ms-teams-notification@v1.3
         with:
           github-token: ${{ github.token }} # this will use the runner's token.
@@ -108,7 +68,6 @@ jobs:
 
       - name: Notify MS Teams on Failure
         if: failure()
-
         uses: jdcargile/ms-teams-notification@v1.3
         with:
           github-token: ${{ github.token }} 
@@ -116,4 +75,3 @@ jobs:
           notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
           notification-color: dc3545
           timezone: America/Chicago
-
