@@ -123,7 +123,7 @@ jobs:
         with:
           github-token: ${{ github.token }} # this will use the runner's token.
           ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}"
+          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
           notification-color: 28a745
           timezone: America/Chicago
 
@@ -132,9 +132,9 @@ jobs:
 
         uses: jdcargile/ms-teams-notification@v1.3
         with:
-          github-token: ${{ github.token }} # this will use the runner's token.
+          github-token: ${{ github.token }} 
           ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}"
+          notification-summary: &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
           notification-color: dc3545
           timezone: America/Chicago
 
