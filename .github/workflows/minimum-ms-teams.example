@@ -13,11 +13,6 @@ jobs:
     steps: 
       - uses: actions/checkout@v3
 
-      - name: Install jq
-        run: |
-          sudo apt update
-          sudo apt install jq
-
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
@@ -50,11 +45,14 @@ jobs:
       - name: Read Summary Report to Get Test Results
         if: always()
         run: |
-          chmod +x ./summary.json
-          PASSED=$(cat ./summary.json | jq -r '.passed | length')
+          PASSED=$(jq -r '.passed | length' ./summary.json)
           echo "PASSED=$PASSED" >> $GITHUB_ENV 
-          FAILURES=$(cat ./summary.json | jq -r '.failed | length')
+          FAILURES=$(jq -r '.failed | length' ./summary.json)
           echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
+          LIST_PASSED=$(jq -r '.passed[]' ./summary.json | tr '\n' ' ')
+          echo "LIST_PASSED=$LIST_PASSED" >> $GITHUB_ENV 
+          LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
+          echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
       - name: Notify MS Teams on Success
         if: success()
