@@ -23,19 +23,34 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.28.1-focal
     env: 
       ENVIRONMENT: ${{ github.event.inputs.environment }}
       SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
 
-    steps:
-     
+    steps: 
       - uses: actions/checkout@v3
 
       - name: Install jq and hub
         run: |
-          apt update
-          apt install jq
+          sudo apt update
+          sudo apt install jq
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+      - name: Cache playwright binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - run: npx playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
 
       - name: Set Environment Variables
         if: env.ENVIRONMENT == null
