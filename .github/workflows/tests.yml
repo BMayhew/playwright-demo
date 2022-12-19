@@ -85,7 +85,7 @@ jobs:
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          show-on-start: false
+          show-on-start: true
           show-on-failure: true          
           environment: env.ENVIRONMENT
           enable-review-diffs-action: false
