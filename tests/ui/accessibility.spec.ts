@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test.skip("Visit home page and run an axe test @axe", async ({
+test.skip("Visit home page and run an axe test @axe @unsatisfactory", async ({
   page,
 }, testInfo) => {
   await page.goto("https://broken-workshop.dequelabs.com/");

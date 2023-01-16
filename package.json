@@ -7,8 +7,14 @@
   "scripts": {
     "test": "npx playwright test --grep-invert @axe",
     "debug": "npx playwright test --headed --timeout=0 --workers=1 --grep-invert @axe",
-    "happy": "npx playwright test --grep @happy --grep-invert @axe",
-    "axe": "npx playwright test --grep @axe"
+    "happy": "npx playwright test --grep /@happy|@smoke/ --grep-invert @axe",
+    "smoke": "npx playwright test -g '@happy|@smoke'",
+    "axe": "npx playwright test --grep @axe",
+    "1": "npx playwright test -g @1",
+    "2": "npx playwright test -g @2",
+    "3": "npx playwright test -g @3",
+    "AB": "npx playwright test -g '@2|@3'",
+    "A": "npx playwright test -g @1 --grep-invert @3"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.4.5",
