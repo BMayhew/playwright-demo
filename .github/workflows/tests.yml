@@ -13,15 +13,12 @@ permissions:
   pages: write
 
 jobs:
-  e2e-tests:
+  install:
     permissions:
       contents: read
       pages: write      
       id-token: write  
     timeout-minutes: 60
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     env: 
       ENVIRONMENT: ${{ github.event.inputs.environment }}
@@ -29,12 +26,6 @@ jobs:
 
     steps: 
       - uses: actions/checkout@v3
-
-      - name: Install rsync
-        run: |
-          sudo apt update
-          sudo apt install rsync
-
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
@@ -50,73 +41,179 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
       - run: npx playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
+          
+      - name: Install Dependencies
+        run: npm ci
 
+  tests:
+    name: 🧪 Demo Example Tests (${{ matrix.shardIndex }}/${{ strategy.job-total }})
+    needs: install
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # project: [chromium]
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Cache Playwright
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
 
       - name: Set Environment Variables
         if: env.ENVIRONMENT == null
         run: | 
           echo "ENVIRONMENT=https://www.automationexercise.com" >> $GITHUB_ENV  
-                
-      - name: Install Dependencies
-        run: npm ci
       
       - name: Run Playwright tests
-        run: npm run test
-      
-      - uses: actions/upload-artifact@v2
+        run: npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
+
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shardIndex }}_${{ strategy.job-total }}
           path: playwright-report/
+          retention-days: 3
+
+  merge:
+    name: Merge Reports
+    if: ${{ always() }}
+    needs: [install,tests]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Cache Playwright
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - uses: actions/checkout@v3
       
-      - name: Configure Pages
-        uses: actions/configure-pages@v2
+      #   # Clear out the existing Authentication
+      # - name: Remove File
+      #   uses: JesseTG/rm@v1.0.3
+      #   with:
+      #     path: storage.json
+ 
+      - uses: actions/download-artifact@v3
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Download Merge HTML
+        run: npm install playwright-merge-html-reports --dev
+
+      - name: Run Report Merge
+        run: npx playwright test tests/merge-reports
+
+      - name: Display structure of Merged
+        run: ls -R
+
+      - uses: actions/upload-artifact@v3
         if: always()
-     
+        with:
+          name: demoMerged
+          path: test-merge-report-demo/
+          retention-days: 3
+      
       - name: Setup Pages
-        if: always()
         uses: actions/configure-pages@v2
-     
-      - name: Upload artifacts
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'playwright-report/'
-      
+          # Upload entire repository
+          path: test-merge-report-demo/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
 
-      - name: Read Summary Report to Get Test Results
-        if: always()
-        run: |
-          PASSED=$(jq -r '.passed | length' ./summary.json)
-          echo "PASSED=$PASSED" >> $GITHUB_ENV 
-          FAILURES=$(jq -r '.failed | length' ./summary.json)
-          echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
-          LIST_PASSED=$(jq -r '.passed[]' ./summary.json | tr '\n' ' ')
-          echo "LIST_PASSED=$LIST_PASSED" >> $GITHUB_ENV 
-          LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
-          echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
-      - name: Notify MS Teams on Success
-        if: success()
 
-        uses: jdcargile/ms-teams-notification@v1.3
-        with:
-          github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
-          notification-color: 28a745
-          timezone: America/Chicago
+      # - name: Configure Pages
+      #   uses: actions/configure-pages@v2
+      #   if: always()
+     
+      # - name: Setup Pages
+      #   if: always()
+      #   uses: actions/configure-pages@v2
+     
+      # - name: Upload artifacts
+      #   uses: actions/upload-pages-artifact@v1
+      #   with:
+      #     path: 'playwright-report/'
+      
+      # - name: Deploy to GitHub Pages
+      #   id: deployment
+      #   uses: actions/deploy-pages@v1
 
-      - name: Notify MS Teams on Failure
-        if: failure()
+      # - name: Read Summary Report to Get Test Results
+      #   if: always()
+      #   run: |
+      #     PASSED=$(jq -r '.passed | length' ./summary.json)
+      #     echo "PASSED=$PASSED" >> $GITHUB_ENV 
+      #     FAILURES=$(jq -r '.failed | length' ./summary.json)
+      #     echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
+      #     LIST_PASSED=$(jq -r '.passed[]' ./summary.json | tr '\n' ' ')
+      #     echo "LIST_PASSED=$LIST_PASSED" >> $GITHUB_ENV 
+      #     LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
+      #     echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
-        uses: jdcargile/ms-teams-notification@v1.3
-        with:
-          github-token: ${{ github.token }} 
-          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-          notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
-          notification-color: dc3545
-          timezone: America/Chicago
+      # - name: Notify MS Teams on Success
+      #   if: success()
+
+      #   uses: jdcargile/ms-teams-notification@v1.3
+      #   with:
+      #     github-token: ${{ github.token }} # this will use the runner's token.
+      #     ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+      #     notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
+      #     notification-color: 28a745
+      #     timezone: America/Chicago
+
+      # - name: Notify MS Teams on Failure
+      #   if: failure()
+
+      #   uses: jdcargile/ms-teams-notification@v1.3
+      #   with:
+      #     github-token: ${{ github.token }} 
+      #     ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+      #     notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
+      #     notification-color: dc3545
+      #     timezone: America/Chicago
 
