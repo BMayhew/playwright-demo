@@ -24,6 +24,7 @@ jobs:
       ENVIRONMENT: ${{ github.event.inputs.environment }}
       SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
 
+
     steps: 
       - uses: actions/checkout@v3
       - name: Get installed Playwright version
@@ -42,7 +43,16 @@ jobs:
       - run: npx playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
           
-      - name: Install Dependencies
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: |
+            node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
   tests:
@@ -67,13 +77,17 @@ jobs:
           path: |
             node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
-
+    
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+     
       - name: Cache Playwright
         uses: actions/cache@v3
         with:
           path: |
             ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
       - name: Set Environment Variables
         if: env.ENVIRONMENT == null
