@@ -155,9 +155,6 @@ jobs:
 
       - name: Display structure of Merged
         run: ls -R
-      
-      - name: cat json
-        run: cat summary.json
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -193,17 +190,17 @@ jobs:
       #   id: deployment
       #   uses: actions/deploy-pages@v1
 
-      # - name: Read Summary Report to Get Test Results
-      #   if: always()
-      #   run: |
-      #     PASSED=$(jq -r '.passed | length' ./summary.json)
-      #     echo "PASSED=$PASSED" >> $GITHUB_ENV 
-      #     FAILURES=$(jq -r '.failed | length' ./summary.json)
-      #     echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
-      #     LIST_PASSED=$(jq -r '.passed[]' ./summary.json | tr '\n' ' ')
-      #     echo "LIST_PASSED=$LIST_PASSED" >> $GITHUB_ENV 
-      #     LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
-      #     echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
+      - name: Read Summary Report to Get Test Results
+        if: always()
+        run: |
+          PASSED=$(jq -r '.passed | length' ./summary.json)
+          echo "PASSED=$PASSED" >> $GITHUB_ENV 
+          FAILURES=$(jq -r '.failed | length' ./summary.json)
+          echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
+          LIST_PASSED=$(jq -r '.passed[]' ./summary.json | tr '\n' ' ')
+          echo "LIST_PASSED=$LIST_PASSED" >> $GITHUB_ENV 
+          LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
+          echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
       # - name: Notify MS Teams on Success
       #   if: success()

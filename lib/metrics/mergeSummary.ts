@@ -33,6 +33,7 @@ function mergeSummary(directories: string[]) {
 
   let newJsonPath = "./summary.json";
   fs.writeFileSync(newJsonPath, JSON.stringify(combined, null, "  "));
+  console.log(`Successfully merged ${directories.length} summary.json files`);
   return combined;
 }
 
