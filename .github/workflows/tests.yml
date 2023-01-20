@@ -101,7 +101,7 @@ jobs:
         if: always()
         with:
           name: report-${{ matrix.shard }}
-          path: ./playwright/playwright-report
+          path: playwright-report/
           retention-days: 3
 
   merge:
@@ -148,7 +148,7 @@ jobs:
  
       - uses: actions/download-artifact@v3
         with:
-          path: ./playwright/playwright-report      
+          path: playwright-report/      
       
       - name: Download Merge HTML
         run: npm install playwright-merge-html-reports --dev
@@ -165,8 +165,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: demo-merged
-          path: './playwright/html-report'
+          name: html-report
+          path: html-report/
           retention-days: 3
       
       - name: Setup Pages
@@ -174,7 +174,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: './playwright/html-report'
+          path: html-report/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
