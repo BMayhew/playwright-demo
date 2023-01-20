@@ -1,6 +1,6 @@
 import path from "path";
-import { test, expect } from "@playwright/test";
-import { mergeHTMLReports } from "playwright-merge-html-reports";
+const { mergeHTMLReports } = require("playwright-merge-html-reports");
+// import { mergeHTMLReports } from "playwright-merge-html-reports";
 
 mergeHTMLReports(
   [
