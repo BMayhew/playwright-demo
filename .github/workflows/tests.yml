@@ -95,12 +95,12 @@ jobs:
           echo "ENVIRONMENT=https://www.automationexercise.com" >> $GITHUB_ENV  
       
       - name: Run Playwright tests
-        run: npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
+        run: SHARD=${{ matrix.shardIndex }} npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
 
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: report-${{ matrix.shard }}
+          name: report-${{ matrix.shardIndex }}
           path: playwright-report/
           retention-days: 3
 

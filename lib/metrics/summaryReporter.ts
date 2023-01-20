@@ -72,7 +72,10 @@ class SummaryReporter implements Reporter, Summary {
         return this.failed.indexOf(element) === index;
     });
 
-    fs.writeFileSync("./summary.json", JSON.stringify(this, null, "  "));
+    fs.writeFileSync(
+      `./playwright-report/summary${process.env.SHARD || ""}.json`,
+      JSON.stringify(this, null, "  ")
+    );
   }
 }
 
