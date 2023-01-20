@@ -151,11 +151,8 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
-      - name: Download Merge HTML
-        run: npm install playwright-merge-html-reports --dev
-
       - name: Run Report Merge
-        run: npx playwright test tests/merge-reports
+        run: npm run metrics
 
       - name: Display structure of Merged
         run: ls -R
@@ -177,8 +174,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-
-
 
       # - name: Configure Pages
       #   uses: actions/configure-pages@v2
