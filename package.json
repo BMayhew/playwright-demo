@@ -12,12 +12,13 @@
     "axe": "npx playwright test --grep @axe",
     "AB": "npx playwright test -g '@2|@3'",
     "A": "npx playwright test -g @1 --grep-invert @3",
-    "metrics": "npx ts-node lib/metrics/merge-reports.ts"
+    "merge": "npx ts-node lib/metrics/merge-reports.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.4.5",
     "dotenv": "^11.0.0",
     "genson-js": "^0.0.8",
-    "playwright-merge-html-reports": "^0.2.6"
+    "playwright-merge-html-reports": "^0.2.6",
+    "ts-node": "^10.9.1"
   }
 }

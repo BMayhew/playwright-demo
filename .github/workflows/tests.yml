@@ -152,7 +152,7 @@ jobs:
         run: ls -R
 
       - name: Run Report Merge
-        run: npm run metrics
+        run: npm run merge
 
       - name: Display structure of Merged
         run: ls -R

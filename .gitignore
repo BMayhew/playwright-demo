@@ -1,7 +1,7 @@
 # Playwright Specfic
 node_modules/
 test-results/
-playwright-report/
+playwright-report*/
 test-merge-report-demo/
 summary.json
 
