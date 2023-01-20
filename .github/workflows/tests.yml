@@ -139,12 +139,6 @@ jobs:
           key: playwright-${{ hashFiles('package-lock.json') }}
 
       - uses: actions/checkout@v3
-      
-      #   # Clear out the existing Authentication
-      # - name: Remove File
-      #   uses: JesseTG/rm@v1.0.3
-      #   with:
-      #     path: storage.json
  
       - uses: actions/download-artifact@v3
         with:
@@ -161,6 +155,9 @@ jobs:
 
       - name: Display structure of Merged
         run: ls -R
+      
+      - name: cat json
+        run: cat summary.json
 
       - uses: actions/upload-artifact@v3
         if: always()

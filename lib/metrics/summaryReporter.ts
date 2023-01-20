@@ -73,7 +73,7 @@ class SummaryReporter implements Reporter, Summary {
     });
 
     fs.writeFileSync(
-      `./playwright-report/summary${process.env.SHARD || ""}.json`,
+      "./playwright-report/summary.json",
       JSON.stringify(this, null, "  ")
     );
   }
