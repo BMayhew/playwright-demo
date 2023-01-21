@@ -202,6 +202,24 @@ jobs:
           LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
           echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
+      - name: Get workflow Run ID
+        uses: octokit/request-action@v2.x
+        id: workflowRunId
+        with:
+          route: GET /repos/org/repo/actions/runs/${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Get time diff between now and workflow run creation time
+        id: workflowDuration
+        run: |
+          rpm -qa | grep dateutils || rpm -i https://download.opensuse.org/repositories/utilities/RHEL_7/x86_64/dateutils-0.4.4-44.1.x86_64.rpm
+          NOW=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+          DIFF=`ddiff -i "%Y-%m-%dT%H:%M:%SZ" "${{ fromJson(steps.workflowRunId.outputs.data).created_at }}" $NOW -f "%H°%M'%S\" to complete."`
+          echo "time=$(echo $DIFF)" >> $GITHUB_OUTPUT
+
+      - name: echo time took
+        run: echo $(Took ${{ steps.workflowDuration.outputs.time }})
       # - name: Notify MS Teams on Success
       #   if: success()
 
