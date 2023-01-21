@@ -206,7 +206,7 @@ jobs:
         uses: octokit/request-action@v2.x
         id: workflowRunId
         with:
-          route: GET /repos/org/repo/actions/runs/${{ github.run_id }}
+          route: GET /repos/Bmayhew/playwright-demo/actions/runs/${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
