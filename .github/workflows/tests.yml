@@ -213,7 +213,7 @@ jobs:
       - name: Get time diff between now and workflow run creation time
         id: workflowDuration
         run: |
-          rpm -qa | grep dateutils || rpm -i https://download.opensuse.org/repositories/utilities/RHEL_7/x86_64/dateutils-0.4.4-44.1.x86_64.rpm
+          rpm -qa | grep dateutils || rpm -i https://rpmfind.net/linux/opensuse/tumbleweed/repo/oss/x86_64/dateutils-0.4.10-2.1.x86_64.rpm
           NOW=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
           DIFF=`ddiff -i "%Y-%m-%dT%H:%M:%SZ" "${{ fromJson(steps.workflowRunId.outputs.data).created_at }}" $NOW -f "%H°%M'%S\" to complete."`
           echo "time=$(echo $DIFF)" >> $GITHUB_OUTPUT
