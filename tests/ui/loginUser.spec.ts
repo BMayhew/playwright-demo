@@ -40,7 +40,7 @@ test.describe("/login", async () => {
     await page.getByTestId("login-email").fill(username);
     await page.getByTestId("login-password").fill(password);
     await page.getByTestId("login-button").click();
-    expect(page.locator("header")).toContainText("Logged in as Testy$");
+    expect(page.locator("header")).toContainText("Logged in as Testy");
     expect(page.getByTestId("login-email")).toHaveCount(0);
 
     await page.locator("text=Logout").click();
