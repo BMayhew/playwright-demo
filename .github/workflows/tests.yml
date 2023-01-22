@@ -20,16 +20,30 @@ jobs:
       id-token: write  
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    env: 
+    outputs:
+      playwright_version: ${{ steps.set-env.outputs.PLAYWRIGHT_VERSION }}
+      started_at: ${{ steps.set-env.outputs.STARTED_AT}}
+    env:
       ENVIRONMENT: ${{ github.event.inputs.environment }}
       SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
 
-
-    steps: 
+    steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Set current date as env variable
+        run: echo "STARTED_AT=$(date +%s)" >> $GITHUB_ENV
+
+      # - name: Dump GitHub context for debugging
+      #   id: github_context_step
+      #   run: echo '${{ toJSON(github) }}'
+
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+      
       - name: Cache playwright binaries
         uses: actions/cache@v3
         id: playwright-cache
@@ -37,35 +51,45 @@ jobs:
           path: |
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-      - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
       - run: npx playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-          
+
       - name: Cache node_modules
         uses: actions/cache@v3
-        id: cache-node-modules
+        id: node-modules-cache
         with:
           path: |
             node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm ci
+      - run: npm ci --ignore-scripts
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      
+      - name: Create Output for ENV Variables
+        id: set-env
+        run: |
+          echo "PLAYWRIGHT_VERSION=${{env.PLAYWRIGHT_VERSION}}" >> $GITHUB_OUTPUT
+          echo "STARTED_AT=${{env.STARTED_AT}}" >> $GITHUB_OUTPUT        
 
   tests:
-    name: 🧪 Demo Example Tests (${{ matrix.shardIndex }}/${{ strategy.job-total }})
+    name: Run Playwright Tests (${{ matrix.shardIndex }}/${{ strategy.job-total }})
     needs: install
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # project: [chromium]
-        shardIndex: [1, 2, 3, 4, 5]
-        shardTotal: [5]
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
+    outputs:
+      playwright_version: ${{ steps.set-env.outputs.PLAYWRIGHT_VERSION }}
+      started_at: ${{ steps.set-env.outputs.STARTED_AT}}
+      environment: ${{ steps.set-env.outputs.ENVIRONMENT}}
+    env:
+      PLAYWRIGHT_VERSION: ${{ needs.install.outputs.playwright_version }}
+      STARTED_AT: ${{ needs.install.outputs.started_at }}
+      ENVIRONMENT: ${{ needs.install.outputs.started_at }}
 
     steps:
       - uses: actions/checkout@v3
@@ -77,11 +101,7 @@ jobs:
           path: |
             node_modules
           key: modules-${{ hashFiles('package-lock.json') }}
-    
-      - name: Get installed Playwright version
-        id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
-     
+
       - name: Cache Playwright
         uses: actions/cache@v3
         with:
@@ -95,7 +115,7 @@ jobs:
           echo "ENVIRONMENT=https://www.automationexercise.com" >> $GITHUB_ENV  
       
       - name: Run Playwright tests
-        run: SHARD=${{ matrix.shardIndex }} npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
+        run: npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -103,6 +123,14 @@ jobs:
           name: report-${{ matrix.shardIndex }}
           path: playwright-report/
           retention-days: 3
+
+      - name: Create Output for ENV Variables
+        if: always()
+        id: set-env
+        run: |
+          echo "PLAYWRIGHT_VERSION=${{env.PLAYWRIGHT_VERSION}}" >> $GITHUB_OUTPUT
+          echo "STARTED_AT=${{env.STARTED_AT}}" >> $GITHUB_OUTPUT   
+          echo "ENVIRONMENT=${{env.ENVIRONMENT}}" >> GITHUB_OUTPUT     
 
   merge:
     name: Merge Reports
@@ -116,10 +144,15 @@ jobs:
     concurrency:
       group: "pages"
       cancel-in-progress: true
+    env:
+      PLAYWRIGHT_VERSION: ${{ needs.tests.outputs.playwright_version }}
+      STARTED_AT: ${{ needs.tests.outputs.started_at }}
+      ENVIRONMENT: ${{ needs.tests.outputs.started_at }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -137,16 +170,11 @@ jobs:
           path: |
             ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
-
-      - uses: actions/checkout@v3
  
       - uses: actions/download-artifact@v3
         with:
           path: playwright-report/      
       
-      - name: Download Merge HTML
-        run: npm install playwright-merge-html-reports --dev
-
       - name: Display structure of downloaded files
         run: ls -R
 
@@ -164,12 +192,17 @@ jobs:
           retention-days: 3
       
       - name: Setup Pages
+        if: always()
         uses: actions/configure-pages@v2
+
       - name: Upload artifact
+        if: always()
         uses: actions/upload-pages-artifact@v1
         with:
           path: html-report/
+  
       - name: Deploy to GitHub Pages
+        if: always()
         id: deployment
         uses: actions/deploy-pages@v1
 
@@ -202,43 +235,89 @@ jobs:
           LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
           echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
-      - name: Get workflow Run ID
-        uses: octokit/request-action@v2.x
-        id: workflowRunId
-        with:
-          route: GET /repos/Bmayhew/playwright-demo/actions/runs/${{ github.run_id }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Get time diff between now and workflow run creation time
-        id: workflowDuration
+      - name: Output time taken
+        if: always()
         run: |
-          rpm -qa | grep dateutils || rpm -i https://rpmfind.net/linux/opensuse/tumbleweed/repo/oss/x86_64/dateutils-0.4.10-2.1.x86_64.rpm
-          NOW=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
-          DIFF=`ddiff -i "%Y-%m-%dT%H:%M:%SZ" "${{ fromJson(steps.workflowRunId.outputs.data).created_at }}" $NOW -f "%H°%M'%S\" to complete."`
-          echo "time=$(echo $DIFF)" >> $GITHUB_OUTPUT
+         echo "Duration: $(($(($(date +%s) - ${{ env.STARTED_AT }}))/60)) minute(s)"
+         echo "DURATION=$(($(($(date +%s) - ${{ env.STARTED_AT }}))/60))" >> $GITHUB_ENV
 
-      - name: echo time took
-        run: echo $(Took ${{ steps.workflowDuration.outputs.time }})
-      # - name: Notify MS Teams on Success
-      #   if: success()
+      - name: Echo time took
+        if: always()
+        run: echo $(Took ${{ env.DURATION }} minute(s) to complete)
 
-      #   uses: jdcargile/ms-teams-notification@v1.3
-      #   with:
-      #     github-token: ${{ github.token }} # this will use the runner's token.
-      #     ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-      #     notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
-      #     notification-color: 28a745
-      #     timezone: America/Chicago
+      - name: Notify MS Teams on Success
+        if: success()
+        uses: jdcargile/ms-teams-notification@v1.3
+        with:
+          github-token: ${{ github.token }} # this will use the runner's token.
+          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+          notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
+          notification-color: 28a745
+          timezone: America/Chicago
 
-      # - name: Notify MS Teams on Failure
-      #   if: failure()
+      - name: Notify MS Teams on Failure
+        if: failure()
+        uses: jdcargile/ms-teams-notification@v1.3
+        with:
+          github-token: ${{ github.token }} 
+          ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
+          notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
+          notification-color: dc3545
+          timezone: America/Chicago
 
-      #   uses: jdcargile/ms-teams-notification@v1.3
-      #   with:
-      #     github-token: ${{ github.token }} 
-      #     ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
-      #     notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
-      #     notification-color: dc3545
-      #     timezone: America/Chicago
-
+      - name: Send Slack Notification
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: repo,eventName,workflow,job,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                title: `Playwright Demo Results :test_tube:`,
+                fields: [{
+                  title: 'Environment',
+                  value: '${{ env.ENVIRONMENT }},
+                  short: true
+                },
+                {
+                  title: 'Triggered By',
+                  value: [{'origin': 'pull_request', 'new': 'Pull Request'}, {'origin': 'schedule', 'new': 'Schedule'}, {'origin': 'repository_dispatch', 'new': 'Deploy'}, {'origin': 'workflow_dispatch', 'new': 'GitHub Actions'}].find(item => item.origin === `${process.env.AS_EVENT_NAME}`).new || `${process.env.AS_EVENT_NAME}`,
+                  short: true
+                },
+                {
+                  title: 'Repo',
+                  value: `${process.env.AS_REPO}`,
+                  short: true
+                },
+                {
+                  title: 'Execution Time',
+                  value: `Took ${{ env.DURATION }} minute(s)`,
+                  short: true
+                },
+                {
+                  title: 'Workflow',
+                  value: `${process.env.AS_WORKFLOW}`,
+                  short: true
+                },
+                {
+                  title: 'Total Tests',
+                  value: (`${{ env.FAILURES }}`.match(/.spec.ts/g) || []).length + (`${{ env.PASSED }}`.match(/.spec.ts/g) || []).length,
+                  short: true
+                },
+                {
+                  title: 'Pull Request',
+                  value: `${{ env.PULL_REQUEST_URL }}`,
+                  short: false
+                },
+                {
+                  title: 'Failures',
+                  value: `${{ env.FAILURES }}` === '' ? 'No failures' : `${{ env.FAILURES }}`.match(/.spec.ts/g).length > 10 ? `Too many failures to print. Please go to GitHub to see full list of failures` : '```${{ env.FAILURES }}```'.replace(/ /g, '\n'),
+                  short: false
+                }]
+              }]
+            }  
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
