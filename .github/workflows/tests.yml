@@ -199,6 +199,10 @@ jobs:
       - name: Display structure of Merged
         run: ls -R
 
+      - name: Copy Summary to html-report/ folder
+        if: always()
+        run: cp summary.json html-report/summary.json
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -221,23 +225,6 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
 
-      # - name: Configure Pages
-      #   uses: actions/configure-pages@v2
-      #   if: always()
-     
-      # - name: Setup Pages
-      #   if: always()
-      #   uses: actions/configure-pages@v2
-     
-      # - name: Upload artifacts
-      #   uses: actions/upload-pages-artifact@v1
-      #   with:
-      #     path: 'playwright-report/'
-      
-      # - name: Deploy to GitHub Pages
-      #   id: deployment
-      #   uses: actions/deploy-pages@v1
-
       - name: Read Summary Report to Get Test Results
         if: always()
         run: |
@@ -246,7 +233,7 @@ jobs:
           TIMEOUT=$(cat ./summary.json | jq -r '.timedOut[]' | tr '\n' ' ' | sed 's/ /--->TIMEOUT /g')
           FAILURES=$(cat ./summary.json | jq -r '.failed[]' | tr '\n' ' ')
           FAILURES+=$TIMEOUT
-          echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
+          echo "FAILURES=$FAILURES" >> $GITHUB_ENV
 
       - name: Output time taken
         if: always()
@@ -283,7 +270,7 @@ jobs:
           custom_payload: |
             {
               attachments: [{
-                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                color: '${{ env.FAILURES }}' === '' ?  'good' : 'danger',
                 title: `Playwright Demo Automation Results :test_tube:`,
                 fields: [{
                   title: 'Site Under Test',
