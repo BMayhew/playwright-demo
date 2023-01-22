@@ -241,10 +241,6 @@ jobs:
          echo "Duration: $(($(($(date +%s) - ${{ env.STARTED_AT }}))/60)) minute(s)"
          echo "DURATION=$(($(($(date +%s) - ${{ env.STARTED_AT }}))/60))" >> $GITHUB_ENV
 
-      - name: Echo time took
-        if: always()
-        run: echo $(Took ${{ env.DURATION }} minute(s) to complete)
-
       - name: Notify MS Teams on Success
         if: success()
         uses: jdcargile/ms-teams-notification@v1.3
@@ -275,10 +271,10 @@ jobs:
             {
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                title: `Playwright Demo Results :test_tube:`,
+                title: `Playwright Demo Automation Results :test_tube:`,
                 fields: [{
                   title: 'Environment',
-                  value: '${{ env.ENVIRONMENT }},
+                  value: '${{ env.ENVIRONMENT }}',
                   short: true
                 },
                 {
