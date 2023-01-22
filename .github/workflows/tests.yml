@@ -270,7 +270,7 @@ jobs:
           custom_payload: |
             {
               attachments: [{
-                color: '${{ env.FAILURES }}' === '' ?  'good' : 'danger',
+               color: '${{ env.FAILURES }}' === '' ?  'good' : '${{ env.PASSED }}'' === '' ? 'warning' : 'danger',
                 title: `Playwright Demo Automation Results :test_tube:`,
                 fields: [{
                   title: 'Site Under Test',
