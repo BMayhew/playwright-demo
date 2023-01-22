@@ -226,14 +226,12 @@ jobs:
       - name: Read Summary Report to Get Test Results
         if: always()
         run: |
-          PASSED=$(jq -r '.passed | length' ./summary.json)
+          PASSED=$(cat ./summary.json | jq -r '.passed[]' | tr '\n' ' ')
           echo "PASSED=$PASSED" >> $GITHUB_ENV 
-          FAILURES=$(jq -r '.failed | length' ./summary.json)
+          TIMEOUT=$(cat ./summary.json | jq -r '.timedOut[]' | tr '\n' ' ' | sed 's/ /--->TIMEOUT /g')
+          FAILURES=$(cat ./summary.json | jq -r '.failed[]' | tr '\n' ' ')
+          FAILURES+=$TIMEOUT
           echo "FAILURES=$FAILURES" >> $GITHUB_ENV 
-          LIST_PASSED=$(jq -r '.passed[]' ./summary.json | tr '\n' ' ')
-          echo "LIST_PASSED=$LIST_PASSED" >> $GITHUB_ENV 
-          LIST_FAILED=$(jq -r '.failed[]' ./summary.json | tr '\n' ' ')
-          echo "LIST_FAILED=$LIST_FAILED" >> $GITHUB_ENV 
 
       - name: Output time taken
         if: always()
