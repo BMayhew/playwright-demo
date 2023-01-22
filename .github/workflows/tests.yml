@@ -23,9 +23,15 @@ jobs:
     outputs:
       playwright_version: ${{ steps.set-env.outputs.PLAYWRIGHT_VERSION }}
       started_at: ${{ steps.set-env.outputs.STARTED_AT}}
+      environment: ${{ steps.set-env.outputs.ENVIRONMENT}}
+      pull_request_url: ${{ steps.set-env.outputs.PULL_REQUEST_URL }}
+
+
     env:
       ENVIRONMENT: ${{ github.event.inputs.environment }}
       SLACK_BOT_USER_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
+      PULL_REQUEST_URL: ${{ github.event.client_payload.pull_request_url }}${{ github.event.pull_request._links.html.href }}${{ github.event.client_payload.github.event.issue.html_url }}
+
 
     steps:
       - uses: actions/checkout@v3
@@ -70,7 +76,9 @@ jobs:
         id: set-env
         run: |
           echo "PLAYWRIGHT_VERSION=${{env.PLAYWRIGHT_VERSION}}" >> $GITHUB_OUTPUT
-          echo "STARTED_AT=${{env.STARTED_AT}}" >> $GITHUB_OUTPUT        
+          echo "STARTED_AT=${{env.STARTED_AT}}" >> $GITHUB_OUTPUT   
+          echo "PULL_REQUEST_URL=${{env.PULL_REQUEST_URL}}" >> $GITHUB_OUTPUT
+          echo "ENVIRONMENT=${{env.ENVIRONMENT}}" >> $GITHUB_OUTPUT        
 
   tests:
     name: Run Playwright Tests (${{ matrix.shardIndex }}/${{ strategy.job-total }})
@@ -86,10 +94,14 @@ jobs:
       playwright_version: ${{ steps.set-env.outputs.PLAYWRIGHT_VERSION }}
       started_at: ${{ steps.set-env.outputs.STARTED_AT}}
       environment: ${{ steps.set-env.outputs.ENVIRONMENT}}
+      pull_request_url: ${{ steps.set-env.outputs.PULL_REQUEST_URL }}
+
     env:
       PLAYWRIGHT_VERSION: ${{ needs.install.outputs.playwright_version }}
       STARTED_AT: ${{ needs.install.outputs.started_at }}
-      ENVIRONMENT: ${{ needs.install.outputs.started_at }}
+      ENVIRONMENT: ${{ needs.install.outputs.environment }}
+      PULL_REQUEST_URL: ${{ needs.install.outputs.pull_request_url }}
+
 
     steps:
       - uses: actions/checkout@v3
@@ -131,6 +143,8 @@ jobs:
           echo "PLAYWRIGHT_VERSION=${{env.PLAYWRIGHT_VERSION}}" >> $GITHUB_OUTPUT
           echo "STARTED_AT=${{env.STARTED_AT}}" >> $GITHUB_OUTPUT   
           echo "ENVIRONMENT=${{env.ENVIRONMENT}}" >> GITHUB_OUTPUT     
+          echo "PULL_REQUEST_URL=${{env.PULL_REQUEST_URL}}" >> $GITHUB_OUTPUT
+
 
   merge:
     name: Merge Reports
@@ -147,7 +161,8 @@ jobs:
     env:
       PLAYWRIGHT_VERSION: ${{ needs.tests.outputs.playwright_version }}
       STARTED_AT: ${{ needs.tests.outputs.started_at }}
-      ENVIRONMENT: ${{ needs.tests.outputs.started_at }}
+      PULL_REQUEST_URL: ${{ needs.tests.outputs.pull_request_url }}
+      ENVIRONMENT: ${{ needs.tests.outputs.environment }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
