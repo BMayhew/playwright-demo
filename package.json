@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@axe-core/playwright": "^4.4.5",
+    "@butchmayhew/playwright-json-summary-reporter": "^1.1.0",
     "dotenv": "^11.0.0",
     "genson-js": "^0.0.8",
     "playwright-merge-html-reports": "^0.2.6",
