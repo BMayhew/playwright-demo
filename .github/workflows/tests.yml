@@ -198,6 +198,19 @@ jobs:
       - name: Display structure of Merged
         run: ls -R
 
+      - name: Read Summary Report to Get Test Results
+        if: always()
+        run: |
+          STATUS=$(cat ./summary.json | jq -r '.status')
+          STATUS="$(echo $STATUS | sed 's/failed/failure/;s/passed/success/')"
+          echo "STATUS=$STATUS" >> $GITHUB_ENV 
+          PASSED=$(cat ./summary.json | jq -r '.passed[]' | tr '\n' ' ')
+          echo "PASSED=$PASSED" >> $GITHUB_ENV 
+          TIMEOUT=$(cat ./summary.json | jq -r '.timedOut[]' | tr '\n' ' ' | sed 's/ /--->TIMEOUT /g')
+          FAILURES=$(cat ./summary.json | jq -r '.failed[]' | tr '\n' ' ')
+          FAILURES+=$TIMEOUT
+          echo "FAILURES=$FAILURES" >> $GITHUB_ENV
+
       - name: Copy Summary to html-report/ folder
         if: always()
         run: cp summary.json html-report/summary.json
@@ -223,19 +236,6 @@ jobs:
         if: always()
         id: deployment
         uses: actions/deploy-pages@v1
-
-      - name: Read Summary Report to Get Test Results
-        if: always()
-        run: |
-          STATUS=$(cat ./summary.json | jq -r '.status')
-          STATUS="$(echo $STATUS | sed 's/failed/failure/;s/passed/success/')"
-          echo "STATUS=$STATUS" >> $GITHUB_ENV 
-          PASSED=$(cat ./summary.json | jq -r '.passed[]' | tr '\n' ' ')
-          echo "PASSED=$PASSED" >> $GITHUB_ENV 
-          TIMEOUT=$(cat ./summary.json | jq -r '.timedOut[]' | tr '\n' ' ' | sed 's/ /--->TIMEOUT /g')
-          FAILURES=$(cat ./summary.json | jq -r '.failed[]' | tr '\n' ' ')
-          FAILURES+=$TIMEOUT
-          echo "FAILURES=$FAILURES" >> $GITHUB_ENV
 
       - name: Output time taken
         if: always()
