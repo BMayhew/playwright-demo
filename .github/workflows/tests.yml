@@ -126,6 +126,10 @@ jobs:
       - name: Run Playwright tests
         run: APP_URL=${{ env.APP_URL}} npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
 
+      - name: Copy Summary to playwright-report/ folder
+        if: always()
+        run: cp summary.json playwright-report/summary.json
+        
       - uses: actions/upload-artifact@v3
         if: always()
         with:
