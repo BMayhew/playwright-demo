@@ -1,6 +1,6 @@
 import fs from "fs";
 
-function mergeSummary(directories: string[]) {
+async function mergeSummary(directories: string[]) {
   let combined = {
     durationInMS: 0,
     passed: [],

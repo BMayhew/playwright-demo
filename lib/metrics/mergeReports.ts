@@ -8,10 +8,10 @@ const reportPathsToMerge = fs
   .filter((item) => item.isDirectory())
   .map(({ name }) => path.resolve(process.cwd() + "/playwright-report", name));
 
+// merges the summary.json in each report-x folder and saves a summary.json to root directory
+await mergeSummary(reportPathsToMerge);
+
 // merges html reports and saves to /html-report
 mergeHTMLReports(reportPathsToMerge, {
   outputFolderName: "html-report",
 });
-
-// merges the summary.json in each report-x folder and saves a summary.json to root directory
-mergeSummary(reportPathsToMerge);
