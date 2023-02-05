@@ -2,6 +2,7 @@ name: Playwright API Checks
 
 on: 
   pull_request:
+  repository_dispatch:
   workflow_dispatch:
     inputs:
       app_url:
