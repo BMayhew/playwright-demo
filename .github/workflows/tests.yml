@@ -45,6 +45,16 @@ jobs:
       #   id: github_context_step
       #   run: echo '${{ toJSON(github) }}'
 
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        id: node-modules-cache
+        with:
+          path: |
+            node_modules
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - run: npm ci --ignore-scripts
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
@@ -61,16 +71,6 @@ jobs:
       - run: npx playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        id: node-modules-cache
-        with:
-          path: |
-            node_modules
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - run: npm ci --ignore-scripts
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
-      
       - name: Create Output for ENV Variables
         id: set-env
         run: |
