@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { mergeHTMLReports } from "playwright-merge-html-reports";
-import { mergeSummary } from "./mergeSummary";
+import { mergeSummary } from "playwright-merge-summary-json-reports";
 
 const reportPathsToMerge = fs
   .readdirSync(process.cwd() + "/playwright-report", { withFileTypes: true })
