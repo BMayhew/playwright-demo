@@ -1,8 +1,9 @@
 {
   "devDependencies": {
+    "@playwright/test": "^1.30",
     "@types/node": "^18.11.0",
-    "playwright-slack-report": "^1.0.19",
-    "@playwright/test": "^1.28.1"
+    "playwright-merge-summary-json-reports": "^1.0.4",
+    "playwright-slack-report": "^1.0.19"
   },
   "scripts": {
     "test": "npx playwright test --grep-invert @axe",
@@ -10,15 +11,16 @@
     "happy": "npx playwright test --grep /@happy|@smoke/ --grep-invert @axe",
     "smoke": "npx playwright test -g '@happy|@smoke'",
     "axe": "npx playwright test --grep @axe",
-    "1": "npx playwright test -g @1",
-    "2": "npx playwright test -g @2",
-    "3": "npx playwright test -g @3",
     "AB": "npx playwright test -g '@2|@3'",
-    "A": "npx playwright test -g @1 --grep-invert @3"
+    "A": "npx playwright test -g @1 --grep-invert @3",
+    "merge": "npx ts-node lib/metrics/mergeReports.ts"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.4.5",
+    "playwright-json-summary-reporter": "^1.0.0",
     "dotenv": "^11.0.0",
-    "genson-js": "^0.0.8"
+    "genson-js": "^0.0.8",
+    "playwright-merge-html-reports": "^0.2.6",
+    "ts-node": "^10.9.1"
   }
 }

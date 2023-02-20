@@ -48,9 +48,9 @@ const config: PlaywrightTestConfig = {
         ["dot"],
         ["list"],
         ["html"],
-        ["./lib/metrics/summaryReporter.ts"],
+        ["playwright-json-summary-reporter"],
       ]
-    : [["dot"], ["list"], ["html"], ["./lib/metrics/summaryReporter.ts"]],
+    : [["dot"], ["list"], ["html"], ["playwright-json-summary-reporter"]],
   forbidOnly: !!process.env.CI, //This will fail if 'test.only' is committed to repo
 };
 
