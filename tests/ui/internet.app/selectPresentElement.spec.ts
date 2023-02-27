@@ -41,9 +41,9 @@ test("Click one of the elements that is visible out of two", async ({
   const portfolio = page.getByRole("link", { name: "Portfolio" });
 
   if (await gallery.isVisible()) {
-    gallery.click();
+    await gallery.click();
   } else if (await portfolio.isVisible()) {
-    portfolio.click();
+    await portfolio.click();
   }
 
   expect(page).toHaveURL(/.*gallery|.*portfolio/);
