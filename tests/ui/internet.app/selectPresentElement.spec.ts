@@ -29,7 +29,7 @@ test("Click one of the elements in the array using promise.race", async ({
   await returnedLocator.click();
 
   // console.log(page.url());
-  expect(page).toHaveURL(/.*gallery|.*portfolio/);
+  await expect(page).toHaveURL(/.*gallery|.*portfolio/);
 });
 
 test("Click one of the elements that is visible out of two", async ({
@@ -46,5 +46,5 @@ test("Click one of the elements that is visible out of two", async ({
     await portfolio.click();
   }
 
-  expect(page).toHaveURL(/.*gallery|.*portfolio/);
+  await expect(page).toHaveURL(/.*gallery|.*portfolio/);
 });

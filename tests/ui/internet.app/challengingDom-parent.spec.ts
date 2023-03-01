@@ -13,13 +13,13 @@ test.describe("Challenging DOM parent", async () => {
       .getByRole("link", { name: "edit" })
       .click();
 
-    expect(page).toHaveURL(/.*#edit/);
+    await expect(page).toHaveURL(/.*#edit/);
   });
 
   test("Find parent element with has-text", async ({ page }) => {
     await page.locator('tr:has-text("Adipisci5")').locator("text=edit").click();
 
-    expect(page).toHaveURL(/.*#edit/);
+    await expect(page).toHaveURL(/.*#edit/);
   });
 
   test("Find parent element with getByRole locator and accessible name", async ({
@@ -30,7 +30,7 @@ test.describe("Challenging DOM parent", async () => {
       .getByRole("link", { name: "edit" })
       .click();
 
-    expect(page).toHaveURL(/.*#edit/);
+    await expect(page).toHaveURL(/.*#edit/);
   });
 
   test("Find parent element with getByRole locator and filter with regex", async ({
@@ -42,7 +42,7 @@ test.describe("Challenging DOM parent", async () => {
       .getByRole("link", { name: "edit" })
       .click();
 
-    expect(page).toHaveURL(/.*#edit/);
+    await expect(page).toHaveURL(/.*#edit/);
   });
 
   test("Find parent element with xpath", async ({ page }) => {
@@ -52,7 +52,7 @@ test.describe("Challenging DOM parent", async () => {
       .locator("text=edit")
       .click();
 
-    expect(page).toHaveURL(/.*#edit/);
+    await expect(page).toHaveURL(/.*#edit/);
   });
 
   test("Find parent element with xpath broken down", async ({ page }) => {
@@ -62,6 +62,16 @@ test.describe("Challenging DOM parent", async () => {
 
     await editLink.click();
 
-    expect(page).toHaveURL(/.*#edit/);
+    await expect(page).toHaveURL(/.*#edit/);
   });
+
+  // test("Find parent element with an intermediate matcher", async ({ page }) => {
+  //   const row = page.locator('table >> *css=tr >> text="Adipisci5"');
+  //   console.log(await row.innerText()); //prints the whole row correctly
+  //   const editLink = row.getByText("edit"); // this does't build a new locator off of the row, but rather builds the locator ('table >> *css=tr >> text="Adipisci5" >> text="edit"')
+
+  //   await editLink.click(); // this element does't exist based on the locator that was built.
+
+  //   await expect(page).toHaveURL(/.*#edit/);
+  // });
 });
