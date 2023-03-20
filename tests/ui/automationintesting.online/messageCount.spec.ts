@@ -35,6 +35,23 @@ test.describe("/admin Checks", async () => {
     // This is a sleep 😴
     // await new Promise((r) => setTimeout(r, 5000));
   });
+
+  test(`Duplicate Test Validate Message Count is ${count}`, async ({
+    page,
+  }) => {
+    await expect(page.getByRole("link", { name: "Logout" })).toHaveText(
+      "Logout"
+    );
+
+    const messageCountSpan = page
+      .locator('[href*="#/admin/messages"]')
+      .locator("span");
+
+    await expect(messageCountSpan).toHaveText(`${count}`);
+
+    // This is a sleep 😴
+    // await new Promise((r) => setTimeout(r, 5000));
+  });
 });
 
 // This function uses the route class and fulfill intercepting what was sent form the server and fulfill it with our provided response (mocking!)
