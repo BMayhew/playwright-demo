@@ -20,7 +20,7 @@
     "playwright-json-summary-reporter": "^1.0.0",
     "dotenv": "^11.0.0",
     "genson-js": "^0.0.8",
-    "playwright-merge-html-reports": "^0.2.6",
+    "playwright-merge-html-reports": "^0.2.8",
     "ts-node": "^10.9.1"
   }
 }
