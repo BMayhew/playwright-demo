@@ -30,11 +30,8 @@ test.describe("/admin Checks", async () => {
       .locator('[href*="#/admin/messages"]')
       .locator("span");
 
-    // I had to add a wait condition here because the route was not being fulfilled before the expect was being called
-    while (!message) {
-      await new Promise((r) => setTimeout(r, 100));
-    }
-
+    // Wait for the message count to be updated before making an assertion
+    await page.waitForLoadState("networkidle");
     await expect(messageCountSpan).toHaveText(`${message.count}`);
   });
 });
