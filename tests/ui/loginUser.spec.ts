@@ -7,6 +7,7 @@ let password = process.env.USER_PASSWORD;
 test.describe("/login", async () => {
   test.beforeEach(async ({ context }) => {
     username = await createUser();
+
     await context.route("**/*", (request) => {
       request.request().url().startsWith("https://googleads.g.doubleclick.net")
         ? request.abort() //if true
@@ -24,7 +25,8 @@ test.describe("/login", async () => {
 
     await page.getByTestId("login-email").fill(username);
     await page.getByTestId("login-password").fill(password);
-    await page.locator("button:has-text('Login')").click();
+    await page.locator("text=Login").click();
+    // await page.locator("button:has-text('Login')").click();
     await page.waitForLoadState("networkidle");
 
     expect(page.locator("header")).toContainText("Logged in as Testy");
