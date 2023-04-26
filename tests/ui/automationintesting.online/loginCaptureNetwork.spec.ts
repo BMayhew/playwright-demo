@@ -56,9 +56,11 @@ test("Intercept response data /count /room/", async ({ page }) => {
   // console.log(body); // body = { count: 1 }
 
   // Set count variable to count value
-  let count = body.count;
+  let count = body.count.toString();
 
-  expect(count).toBe(1);
+  expect(page.locator('[href*="#/admin/messages"]').locator("span")).toHaveText(
+    count
+  );
 
   const response2 = await responsePromise2;
   const body2 = await response2.json();
