@@ -1,13 +1,19 @@
 import { test, expect, selectors } from "@playwright/test";
 
 test.describe("/admin Checks", async () => {
-  let count = "100";
-
-  test.beforeEach(async ({ page }) => {
+  test.beforeAll(async () => {
     selectors.setTestIdAttribute("data-testid");
+  });
 
-    // This calls an async function that exists at the bottom of this page, it takes the page instance and a number
-    await mockMessageCount(page, count);
+  test(`Validate Message Count is correct`, async ({ page }) => {
+    let message;
+
+    await page.route("**/message/count", async (route) => {
+      const response = await route.fetch();
+      message = await response.json();
+      route.continue();
+    });
+
     await page.goto("https://automationintesting.online/");
     await page.getByRole("button", { name: "Let me hack!" }).click();
     await page.getByRole("link", { name: "Admin panel" }).click();
@@ -16,9 +22,6 @@ test.describe("/admin Checks", async () => {
     await page.getByTestId("password").click();
     await page.getByTestId("password").fill("password");
     await page.getByTestId("submit").click();
-  });
-
-  test(`Validate Message Count is ${count}`, async ({ page }) => {
     await expect(page.getByRole("link", { name: "Logout" })).toHaveText(
       "Logout"
     );
@@ -27,16 +30,8 @@ test.describe("/admin Checks", async () => {
       .locator('[href*="#/admin/messages"]')
       .locator("span");
 
-    await expect(messageCountSpan).toHaveText(`${count}`);
+    // Wait for the message count to be updated before making an assertion
+    await page.waitForLoadState("networkidle");
+    await expect(messageCountSpan).toHaveText(`${message.count}`);
   });
 });
-
-// This function uses the route class and fulfill intercepting what was sent form the server and fulfill it with our provided response (mocking!)
-export async function mockMessageCount(page, messageCount) {
-  await page.route("**/message/count", (route) =>
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify({ count: messageCount }),
-    })
-  );
-}

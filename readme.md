@@ -88,7 +88,7 @@ You will run into scenarios where you will need to add a update a snapshot image
 If running on a M1 mac, this playwright docker image will work
 
 ```bash
-docker run --ipc=host --shm-size=1gb --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.17.1-arm64 /bin/bash
+docker run --ipc=host --shm-size=1gb --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.32.3-arm64 npx playwright test tests/ui/loginUser.spec.ts 
 ```
 
 While at the bash prompt in the docker container you can run this command which will install playwright and all the dependencies and run all the tests and update the snapshots
