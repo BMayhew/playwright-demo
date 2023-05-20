@@ -25,9 +25,9 @@ test.describe("/login", async () => {
 
     await page.getByTestId("login-email").fill(username);
     await page.getByTestId("login-password").fill(password);
-    await page.locator("text=Login").click();
-    // await page.locator("button:has-text('Login')").click();
+    await page.getByTestId("login-button").click();
     await page.waitForLoadState("networkidle");
+    let hey = await page.locator("header").textContent();
 
     expect(page.locator("header")).toContainText("Logged in as Testy");
 
