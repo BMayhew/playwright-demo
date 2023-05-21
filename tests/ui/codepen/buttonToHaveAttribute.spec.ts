@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+test.use({ userAgent: "some custom ua" });
+
 test("test", async ({ page }) => {
   await page.goto("https://codepen.io/bmayhew/pen/eYLdwVg");
 
