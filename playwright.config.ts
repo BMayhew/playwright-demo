@@ -11,7 +11,7 @@ const config: PlaywrightTestConfig = {
     browserName: "chromium",
     headless: true,
     permissions: ["clipboard-read"],
-    userAgent: "some custom ua",
+    // userAgent: "some custom ua",
     navigationTimeout: 10000,
     actionTimeout: 5000,
     launchOptions: {
