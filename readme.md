@@ -117,3 +117,4 @@ npm ci && npx playwright install --with-deps && npx playwright test --update-sna
 * [Awesome-Playwright](https://github.com/mxschmitt/awesome-playwright)
 * [25 reasons to choose Playwright as your next web testing framework](https://www.marcusfelling.com/blog/2022/25-reasons-to-choose-playwright-as-your-next-web-testing-framework)
 * [Create resilient 🎭 Playwright e2e tests with locators](https://www.marcusfelling.com/blog/2022/create-more-reliable-playwright-tests-with-locators/)
+
