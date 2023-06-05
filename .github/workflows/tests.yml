@@ -1,6 +1,6 @@
 name: Playwright API Checks
 
-on: 
+on:
   pull_request:
   repository_dispatch:
   workflow_dispatch:
@@ -17,8 +17,8 @@ jobs:
   install:
     permissions:
       contents: read
-      pages: write      
-      id-token: write  
+      pages: write
+      id-token: write
     timeout-minutes: 60
     runs-on: ubuntu-latest
     outputs:
@@ -54,11 +54,11 @@ jobs:
           key: modules-${{ hashFiles('package-lock.json') }}
       - run: npm ci --ignore-scripts
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
-      
+
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
-      
+
       - name: Cache playwright binaries
         uses: actions/cache@v3
         id: playwright-cache
@@ -119,18 +119,21 @@ jobs:
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
+      - name: Install OS Dependencies (needed for Webkit)
+        run: npx playwright install --with-deps
+
       - name: Set APP_URL if not passed in
         if: env.APP_URL == null
-        run: | 
-          echo "APP_URL=https://www.automationexercise.com" >> $GITHUB_ENV  
-      
+        run: |
+          echo "APP_URL=https://www.automationexercise.com" >> $GITHUB_ENV
+
       - name: Run Playwright tests
         run: APP_URL=${{ env.APP_URL}} npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
 
       - name: Copy Summary to playwright-report/ folder
         if: always()
         run: cp summary.json playwright-report/summary.json
-        
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -150,7 +153,7 @@ jobs:
   merge:
     name: Merge Reports
     if: ${{ always() }}
-    needs: [install,tests]
+    needs: [install, tests]
     timeout-minutes: 60
     permissions:
       contents: read
@@ -168,7 +171,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -186,11 +189,11 @@ jobs:
           path: |
             ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
- 
+
       - uses: actions/download-artifact@v3
         with:
-          path: playwright-report/      
-      
+          path: playwright-report/
+
       - name: Display structure of downloaded files
         run: ls -R
 
@@ -226,7 +229,7 @@ jobs:
           name: html-report
           path: html-report/
           retention-days: 3
-      
+
       - name: Setup Pages
         if: always()
         uses: actions/configure-pages@v2
@@ -236,7 +239,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: html-report/
-  
+
       - name: Deploy to GitHub Pages
         if: always()
         id: deployment
@@ -245,8 +248,8 @@ jobs:
       - name: Output time taken
         if: always()
         run: |
-         echo "Duration: $(($(($(date +%s) - ${{ env.STARTED_AT }}))/60)) minute(s)"
-         echo "DURATION=$(($(($(date +%s) - ${{ env.STARTED_AT }}))/60))" >> $GITHUB_ENV
+          echo "Duration: $(($(($(date +%s) - ${{ env.STARTED_AT }}))/60)) minute(s)"
+          echo "DURATION=$(($(($(date +%s) - ${{ env.STARTED_AT }}))/60))" >> $GITHUB_ENV
 
       - name: Notify MS Teams on Success
         if: success()
@@ -262,7 +265,7 @@ jobs:
         if: failure()
         uses: jdcargile/ms-teams-notification@v1.3
         with:
-          github-token: ${{ github.token }} 
+          github-token: ${{ github.token }}
           ms-teams-webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK }}
           notification-summary: Results &#x2705; ${{ env.PASSED }} | &#x274C; ${{ env.FAILURES }}
           notification-color: dc3545
@@ -320,7 +323,7 @@ jobs:
                   short: false
                 }]
               }]
-            }  
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
