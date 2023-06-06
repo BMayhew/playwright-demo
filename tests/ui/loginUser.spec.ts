@@ -27,7 +27,6 @@ test.describe("/login", async () => {
     await page.getByTestId("login-password").fill(password);
     await page.getByTestId("login-button").click();
     await page.waitForLoadState("networkidle");
-    let hey = await page.locator("header").textContent();
 
     expect(page.locator("header")).toContainText("Logged in as Testy");
 
