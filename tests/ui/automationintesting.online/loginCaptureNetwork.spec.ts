@@ -7,13 +7,16 @@ test("Intercept request postData /validate", async ({ page, context }) => {
   await page.locator('[data-testid="password"]').fill("password");
   await page.locator('[data-testid="submit"]').click();
 
+  // I added this wait to slow my test down from opening a new tab/page, without this on a fast machine, the server didn't have the token to authenticate second window. 
+  await page.waitForTimeout(500)
+
   // Now we are authenticated make sure the 'validate' endpoint post data is correct
   // This required a different page context as validate only calls on a hard refresh and Playwright doesn't have that capability yet
   const pageTwo = await context.newPage();
 
   //Get data from a POST request (notice no await!!)
-  const requestPromise = pageTwo.waitForRequest((response) =>
-    response.url().includes("https://automationintesting.online/auth/validate")
+  const requestPromise = pageTwo.waitForRequest(response =>
+    response.url() === "https://automationintesting.online/auth/validate" && response.method() === "POST"
   );
 
   await pageTwo.goto("https://automationintesting.online/#/admin/");
