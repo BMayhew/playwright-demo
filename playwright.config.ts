@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig } from "@playwright/test";
+import { PlaywrightTestConfig, expect } from "@playwright/test";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -53,5 +53,43 @@ const config: PlaywrightTestConfig = {
     : [["dot"], ["list"], ["html"], ["playwright-json-summary-reporter"]],
   forbidOnly: !!process.env.CI, //This will fail if 'test.only' is committed to repo
 };
+
+expect.extend({
+  toBeString(received: string) {
+    const check = typeof received == "string";
+
+    if (check) {
+      return {
+        message: () => "passed",
+        pass: true,
+      };
+    } else {
+      return {
+        message: () =>
+          `toBeString() assertion failed.\nYou expected '${received}' to be a string but it's a ${typeof received}\n`,
+        pass: false,
+      };
+    }
+  },
+});
+
+expect.extend({
+  toBeOneOfValues(received: any, array: any[]) {
+    const check = array.includes(received);
+
+    if (check) {
+      return {
+        message: () => "passed",
+        pass: true,
+      };
+    } else {
+      return {
+        message: () =>
+          `toBeOneOfValues() assertion failed.\nYou expected [${array}] to include '${received}'\n`,
+        pass: false,
+      };
+    }
+  },
+});
 
 export default config;

@@ -27,6 +27,7 @@ test.describe("/api/verifyLogin", async () => {
     expect(response.status()).toBe(200);
     expect(body.responseCode).toBe(200);
     expect(body.message).toBe("User exists!");
+    expect(body.message).toBeString();
 
     //This section does Json Schema Assertions
     let jsonName = "POST_login";
