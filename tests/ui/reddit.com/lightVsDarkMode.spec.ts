@@ -49,3 +49,23 @@ test.describe("Reddit.com", () => {
     await context.close();
   });
 });
+
+test("Exploring other options", async ({ page, browser }) => {
+  // Create context with dark mode
+  const context = await browser.newContext({
+    colorScheme: "dark", // or 'light'
+  });
+
+  // Create page with dark mode
+  const newPage = await browser.newPage({
+    colorScheme: "dark", // or 'light'
+  });
+
+  await newPage.goto("https://www.reddit.com/");
+
+  await newPage.screenshot({
+    path: `tests/ui/reddit.com/screenshot/reddit-home-dark-context.png`,
+  });
+
+  await context.close();
+});
