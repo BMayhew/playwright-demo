@@ -6,22 +6,19 @@ test.describe("Reddit.com", () => {
 
     await page.goto("https://www.reddit.com/");
 
-    const postContainer = page.getByTestId("post-container").first();
+    const themeElement = page.locator(".theme-beta").first();
 
     await page.emulateMedia({ colorScheme: "dark" });
-    await expect(postContainer).toHaveCSS(
-      "background-color",
-      "rgba(26, 26, 27, 0.8)"
-    );
+    await expect(themeElement).toHaveCSS("background-color", "rgb(11, 20, 22)");
 
     await page.screenshot({
       path: `tests/ui/reddit.com/screenshot/reddit-home-dark.png`,
     });
 
     await page.emulateMedia({ colorScheme: "light" });
-    await expect(postContainer).toHaveCSS(
+    await expect(themeElement).toHaveCSS(
       "background-color",
-      "rgba(255, 255, 255, 0.8)"
+      "rgb(255, 255, 255)"
     );
 
     await page.screenshot({
