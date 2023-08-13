@@ -141,6 +141,14 @@ jobs:
           path: playwright-report/
           retention-days: 3
 
+      - name: Upload blob report to GitHub Actions Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: all-blob-reports
+          path: blob-report/
+          retention-days: 1
+
       - name: Create Output for ENV Variables
         if: always()
         id: set-env
@@ -219,16 +227,25 @@ jobs:
           FAILURES+=$TIMEOUT
           echo "FAILURES=$FAILURES" >> $GITHUB_ENV
 
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: all-blob-reports
+          path: all-blob-reports
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --config=merge.config.ts ./all-blob-reports
+
       - name: Copy Summary to html-report/ folder
         if: always()
-        run: cp summary.json html-report/summary.json
+        run: cp summary.json playwright-report/summary.json
 
-      - uses: actions/upload-artifact@v3
-        if: always()
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v3
         with:
-          name: html-report
-          path: html-report/
-          retention-days: 3
+          name: html-report-attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 14
 
       - name: Setup Pages
         if: always()
@@ -238,7 +255,7 @@ jobs:
         if: always()
         uses: actions/upload-pages-artifact@v1
         with:
-          path: html-report/
+          path: playwright-report/
 
       - name: Deploy to GitHub Pages
         if: always()

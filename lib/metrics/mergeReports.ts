@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { mergeHTMLReports } from "playwright-merge-html-reports";
+// import { mergeHTMLReports } from "playwright-merge-html-reports";
 import { mergeSummary } from "playwright-merge-summary-json-reports";
 
 const reportPathsToMerge = fs
@@ -13,9 +13,9 @@ async function runReport(paths: string[]) {
   await mergeSummary(paths);
 
   // merges html reports and saves to /html-report
-  await mergeHTMLReports(paths, {
-    outputFolderName: "html-report",
-  });
+  // await mergeHTMLReports(paths, {
+  //   outputFolderName: "html-report",
+  // });
 }
 
 runReport(reportPathsToMerge);
