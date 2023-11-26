@@ -1,14 +1,7 @@
 import { PlaywrightTestConfig, expect } from "@playwright/test";
-import { CurrentsConfig, currentsReporter } from "@currents/playwright";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const currentsConfig: CurrentsConfig = {
-  ciBuildId: "ci-build-id", // 📖 https://currents.dev/readme/guides/ci-build-id
-  recordKey: "secret record key", // 📖 https://currents.dev/readme/guides/record-key
-  projectId: "project id", // get one at https://app.currents.dev
-};
 
 const config: PlaywrightTestConfig = {
   globalSetup: "./global-setup",
