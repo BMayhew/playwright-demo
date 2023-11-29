@@ -2,6 +2,8 @@ name: Playwright API Checks
 
 on:
   pull_request:
+  schedule:
+    - cron: "0 6 * * *"
   repository_dispatch:
   workflow_dispatch:
     inputs:
@@ -100,6 +102,9 @@ jobs:
       STARTED_AT: ${{ needs.install.outputs.started_at }}
       APP_URL: ${{ needs.install.outputs.app_url }}
       PULL_REQUEST_URL: ${{ needs.install.outputs.pull_request_url }}
+      CURRENTS_PROJECT_ID: ${{ secrets.CURRENTS_PROJECT_ID }}
+      CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
+      CURRENTS_CI_BUILD_ID: reporter-${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@v3
