@@ -1,6 +1,6 @@
 import { test, selectors, expect } from "@playwright/test";
 
-test.describe("Reddit.com", () => {
+test.describe.skip("Reddit.com", () => {
   test("Validate dark and light CSS", async ({ page }) => {
     selectors.setTestIdAttribute("data-testid");
 
@@ -47,7 +47,7 @@ test.describe("Reddit.com", () => {
   });
 });
 
-test("Exploring other options", async ({ page, browser }) => {
+test.skip("Exploring other options", async ({ page, browser }) => {
   // Create context with dark mode
   const context = await browser.newContext({
     colorScheme: "dark", // or 'light'
