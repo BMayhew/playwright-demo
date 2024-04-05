@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("Validate product search input", async ({ page }) => {
   await page.goto("https://ecommerce-playground.lambdatest.io/");
 
-  const productName = "Palm Treo Pro";
+  const productName = "Sony VAIO";
   const productSearch = page.getByRole("textbox", {
     name: "Search For Products",
   });

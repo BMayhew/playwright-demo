@@ -1,5 +1,4 @@
-import { Page } from "@playwright/test";
-
+d 
 async function clickAndWait(
   page: Page,
   locator: string,
