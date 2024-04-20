@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@currents/playwright": "^0.10.9",
+    "@currents/playwright": "^1.0.0",
     "@playwright/test": "^1.40",
     "@types/node": "^18.11.0",
     "playwright-merge-summary-json-reports": "^1.0.4",
