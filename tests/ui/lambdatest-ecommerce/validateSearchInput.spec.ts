@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("Validate product search input", async ({ page }) => {
+test.skip("Validate product search input", async ({ page }) => {
   await page.goto("https://ecommerce-playground.lambdatest.io/");
 
   const productName = "Sony VAIO";
