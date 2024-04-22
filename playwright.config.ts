@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig, expect } from "@playwright/test";
+import { PlaywrightTestConfig, devices, expect } from "@playwright/test";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -6,6 +6,13 @@ dotenv.config();
 const config: PlaywrightTestConfig = {
   globalSetup: "./global-setup",
   globalTeardown: "./global-teardown",
+  projects: [
+    {
+      name: "projectA",
+      use: { ...devices.use, browserName: "chromium" },
+    },
+  ],
+
   use: {
     baseURL: process.env.APP_URL,
     browserName: "chromium",
