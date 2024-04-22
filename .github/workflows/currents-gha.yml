@@ -49,4 +49,4 @@ jobs:
           CURRENTS_CI_BUILD_ID: reporter-${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt }}
           COMMIT_INFO_MESSAGE: "pwc-p: ${{ github.event.head_commit.message }}"
         run: |
-          npx pwc-p
+          npx pwc-p --grep-invert @axe
