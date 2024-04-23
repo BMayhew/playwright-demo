@@ -14,7 +14,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test("Register a new user @smoke", async ({ page, baseURL }) => {
+test("Register a new user @smoke", async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL + "/login");
 
   //Visit New User Signup Page
@@ -67,6 +67,11 @@ test("Register a new user @smoke", async ({ page, baseURL }) => {
   await page.locator("[data-qa=create-account]").click();
 
   expect(await page.locator("body")).toContainText("Account Created!");
+  const screenshot = await page.screenshot();
+  await testInfo.attach("screenshot", {
+    body: screenshot,
+    contentType: "image/png",
+  });
   // expect(await page.screenshot()).toMatchSnapshot("account_created.png");
 
   await page.locator("[data-qa=continue-button]").click();
