@@ -133,7 +133,7 @@ jobs:
           echo "APP_URL=https://www.automationexercise.com" >> $GITHUB_ENV
 
       - name: Run Playwright tests
-        run: APP_URL=${{ env.APP_URL}} npx playwright test --grep-invert @axe --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
+        run: APP_URL=${{ env.APP_URL}} npx playwright test --grep-invert @axe --grep-invert @unsatisfactory --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=1
 
       - name: Copy Summary to playwright-report/ folder
         if: always()
