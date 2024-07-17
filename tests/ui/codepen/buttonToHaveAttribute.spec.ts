@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 
 test.use({ userAgent: "some custom ua" });
 
-test("test", async ({ page }) => {
+// skipping due to cloudflare bot checkers
+test.skip("test", async ({ page }) => {
   await page.goto("https://codepen.io/bmayhew/pen/eYLdwVg");
 
   // Create variables for the elements we will interact with
