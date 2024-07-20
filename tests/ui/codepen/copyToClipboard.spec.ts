@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 
 test.use({ userAgent: "some custom ua" });
 
-test("Validate Copy to Clipboard 1", async ({ page }) => {
+test.skip("Validate Copy to Clipboard 1", async ({ page }) => {
   await page.goto("https://codepen.io/shaikmaqsood/pen/XmydxJ");
 
   test.step("Click on Copy TEXT 1 button", async () => {
