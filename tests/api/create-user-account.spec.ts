@@ -3,7 +3,7 @@
 import { test, expect } from "@playwright/test";
 import { validateJsonSchema } from "../../lib/helpers/schemas/validateJsonSchema";
 
-test.describe("/api/createAccount", async () => {
+test.describe("/api/createAccount", { tag: "@api" }, async () => {
   let username = process.env.USER_NAME;
   let password = process.env.USER_PASSWORD;
   let schemaPath = "api";

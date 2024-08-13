@@ -67,7 +67,12 @@ const config: PlaywrightTestConfig = {
         ["blob"],
         ["@currents/playwright"],
       ]
-    : [["list"], ["html"], ["playwright-json-summary-reporter"], ["blob"]],
+    : [
+        ["list"],
+        ["html", { open: "never" }],
+        ["playwright-json-summary-reporter"],
+        ["blob"],
+      ],
   forbidOnly: !!process.env.CI, //This will fail if 'test.only' is committed to repo
 };
 

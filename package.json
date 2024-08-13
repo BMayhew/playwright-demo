@@ -14,7 +14,8 @@
     "axe": "npx playwright test --grep @axe",
     "AB": "npx playwright test -g '@2|@3'",
     "A": "npx playwright test -g @1 --grep-invert @3",
-    "merge": "npx ts-node lib/metrics/mergeReports.ts"
+    "merge": "npx ts-node lib/metrics/mergeReports.ts",
+    "test:merge": "npx playwright test --grep-invert @api --workers=3 || true && npx ts-node updateBlob.ts && npx playwright test --grep @api --workers=1 || true && npx ts-node updateBlob.ts && npx playwright merge-reports --reporter html ./all-blob-reports && npx playwright show-report"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.9.1",

@@ -3,7 +3,7 @@
 import { test, expect } from "@playwright/test";
 import { validateJsonSchema } from "../../lib/helpers/schemas/validateJsonSchema";
 
-test.describe("/api/deleteAccount", async () => {
+test.describe("/api/deleteAccount", { tag: "@api" }, async () => {
   let username =
     Date.now() + (Math.floor(Math.random() * 90000) + 10000) + "test@asdf.comx";
   let password = process.env.USER_PASSWORD;
