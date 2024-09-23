@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "@currents/playwright": "^1.3.2",
-    "@playwright/test": "^1.44.1",
+    "@playwright/test": "^1.47.2",
     "@types/node": "^20.14.0",
     "playwright-merge-summary-json-reports": "^1.0.4",
     "playwright-slack-report": "^1.1.81"
@@ -15,7 +15,8 @@
     "AB": "npx playwright test -g '@2|@3'",
     "A": "npx playwright test -g @1 --grep-invert @3",
     "merge": "npx ts-node lib/metrics/mergeReports.ts",
-    "test:merge": "npx playwright test --grep-invert @api --workers=3 || true && npx ts-node updateBlob.ts && npx playwright test --grep @api --workers=1 || true && npx ts-node updateBlob.ts && npx playwright merge-reports --reporter html ./all-blob-reports && npx playwright show-report"
+    "test:merge": "npx playwright test --grep-invert @api --workers=3 || true && npx ts-node updateBlob.ts && npx playwright test --grep @api --workers=1 || true && npx ts-node updateBlob.ts && npx playwright merge-reports --reporter html ./all-blob-reports && npx playwright show-report",
+    "changed": "npx playwright test --only-changed"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.9.1",
