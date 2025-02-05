@@ -139,7 +139,7 @@ jobs:
         if: always()
         run: cp summary.json playwright-report/summary.json
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: report-${{ matrix.shardIndex }}
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload blob report to GitHub Actions Artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: all-blob-reports
           path: blob-report/
@@ -246,7 +246,7 @@ jobs:
         run: cp summary.json playwright-report/summary.json
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html-report-attempt-${{ github.run_attempt }}
           path: playwright-report
